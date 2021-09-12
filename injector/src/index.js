@@ -6,16 +6,20 @@ import ipc from "./modules/ipc";
 import BrowserWindow from "./modules/browserwindow";
 import CSP from "./modules/csp";
 
+Module.globalPaths.push(path.resolve(process.cwd(), "resources", "..", "app.asar", "node_modules"));
+
 if (!process.argv.includes("--vanilla")) {
     process.env.NODE_OPTIONS = "--no-force-async-hooks-checks";
     app.commandLine.appendSwitch("no-force-async-hooks-checks");
+    
+    // Import our native api and register all the events
+    import("./modules/api");
 
     // Patch and replace the built-in BrowserWindow
     BrowserWindow.patchBrowserWindow();
-
+    
     // Register all IPC events
     ipc.registerEvents();
-
 
     // Remove CSP immediately on linux since they install to discord_desktop_core still
     if (process.platform == "win32" || process.platform == "darwin") app.once("ready", CSP.remove);

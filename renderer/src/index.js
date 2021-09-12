@@ -1,3 +1,4 @@
+import require from "./polyfill";
 import secure from "./secure";
 import patchModuleLoad from "./moduleloader";
 import LoadingIcon from "./loadingicon";

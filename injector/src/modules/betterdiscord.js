@@ -63,17 +63,22 @@ export default class BetterDiscord {
         const success = await browserWindow.webContents.executeJavaScript(`
             (() => {
                 try {
+                    window.global = window;
                     ${content}
                     return true;
-                } catch {
+                } catch (error) {
+                    console.error("BetterDiscord failed to load:", error);
                     return false;
                 }
             })();
+            //# sourceURL=${location.replace(/\\/g, "\\")}
         `);
 
-        if (!success) return; // TODO: cut a fatal log
+        // TODO: Make it show a dialog that bd failed to load.
+        if (!success) return console.log("[BetterDiscord]", "Failed to inject!");
     }
 
+    /**@param {Electron.BrowserWindow} browserWindow */
     static setup(browserWindow) {
 
         // Setup some useful vars to avoid blocking IPC calls
@@ -110,6 +115,10 @@ export default class BetterDiscord {
         browserWindow.webContents.on("render-process-gone", () => {
             hasCrashed = true;
         });
+        
+        if (__dirname.endsWith("dist")) {
+            browserWindow.once("ready-to-show", () => {browserWindow.openDevTools();});
+        }
     }
 
     static disableMediaKeys() {

@@ -10,7 +10,7 @@ module.exports = (env, argv) => ({
   devtool: argv.mode === "production" ? undefined : "eval-source-map",
   entry: "./src/index.js",
   output: {
-    filename: "injector.js",
+    filename: "preload.js",
     path: path.resolve(__dirname, "..", "dist")
   },
   externals: {
@@ -38,14 +38,6 @@ module.exports = (env, argv) => ({
     new webpack.optimize.LimitChunkCountPlugin({
       maxChunks: 1
     })
-    // new CopyPlugin({
-    //   patterns: [
-    //     {
-    //       from: path.resolve(__dirname, "src", "preload.js"),
-    //       to: path.resolve(__dirname, "..", "dist", "preload.js")
-    //     },
-    //   ],
-    // })
   ],
   optimization: {
     minimizer: [
