@@ -60,6 +60,18 @@ const del = function (url, options, callback) {
     });
 };
 
+const head = function (url, options, callback) {
+    if (!request) request = __non_webpack_require__("request");
+
+    return request.head(url, options, (error, res, body) => {
+        try {
+            Reflect.apply(callback, null, [error, res, body]);
+        } catch (err) {
+            console.error(err);
+        }
+    });
+}
+
 export default req;
 export {del as delete};
     
@@ -67,5 +79,6 @@ Object.assign(req, {
     get,
     put,
     post,
+    head,
     delete: del
 });

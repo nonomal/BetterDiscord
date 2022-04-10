@@ -3,12 +3,14 @@ import * as vm from "./vm";
 import * as fs from "./fs";
 import EventEmitter from "common/events";
 import * as https from "./https";
-import Buffer from "buffer/";
+import Buffer from "./buffer";
+import request from "./request";
+import crypto from "./crypto";
 
 export const createRequire = function (path) {
     return mod => {
         switch (mod) {
-            case "request": return Object.assign((...args) => BetterDiscord.HttpManager.get(...args), {get: BetterDiscord.HttpManager.get});
+            case "request": return request;
             case "https": return https;
             case "original-fs":
             case "fs": return fs;
@@ -17,8 +19,8 @@ export const createRequire = function (path) {
             case "electron": return BetterDiscord.ElectronModule;
             case "vm": return vm;
             case "module": return Module;
-            case "buffer": return Buffer;
-            case "crypto": return;
+            case "buffer": return Buffer.getBuffer();
+            case "crypto": return crypto;
     
             default:
                 return Module._load(mod, path, createRequire);
@@ -33,7 +35,5 @@ require.resolve = (path) => {
         if (key.startsWith(path)) return require.cache[key];
     }
 }
-
-window.Buffer = Buffer.Buffer;
 
 export default require;

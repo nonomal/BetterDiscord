@@ -22,7 +22,8 @@ module.exports = (env, argv) => ({
     rimraf: `require("rimraf")`,
     yauzl: `require("yauzl")`,
     mkdirp: `require("mkdirp")`,
-    module: `require("module")`
+    module: `require("module")`,
+    "original-fs": `require("original-fs")`
   },
   resolve: {
     extensions: [".js"],

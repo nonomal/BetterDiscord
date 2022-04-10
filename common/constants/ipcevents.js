@@ -15,16 +15,3 @@ export const MINIMUM_SIZE       = "bd-minimum-size";
 export const DEVTOOLS_WARNING   = "bd-remove-devtools-message";
 export const OPEN_DIALOG        = "bd-open-dialog";
 export const REGISTER_PRELOAD = "bd-register-preload";
-
-// API Events
-export const REQUEST = "bd-http-request";
-export const READ_FILE = "bd-read-file-sync";
-export const READ_DIR = "bd-read-directory-sync";
-export const CREATE_DIR = "bd-create-directory";
-export const DELETE_DIR = "bd-delete-directory";
-export const WRITE_FILE = "bd-write-file-sync";
-export const EXISTS_FILE = "bd-exists-file";
-export const GET_STATS = "bd-get-stats";
-export const RENAME = "bd-rename";
-export const GET_REAL_PATH = "bd-get-real-path";
-export const WATCH_DIR = "bd-watch-dir";

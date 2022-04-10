@@ -378,7 +378,6 @@ export default class WebpackModules {
 }
 
 WebpackModules.initialize();
-}
 
 export const ModulePromise = new Promise(resolve => {
     const Dispatcher = WebpackModules.getByProps("dirtyDispatch");

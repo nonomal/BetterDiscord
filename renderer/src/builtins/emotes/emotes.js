@@ -244,8 +244,7 @@ const modifiers = ["flip", "spin", "pulse", "spin2", "spin3", "1spin", "2spin", 
 
             this.log("Successfully downloaded emotes.asar");
             const asarPath = this.asarPath;
-            const originalFs = require("original-fs");
-            originalFs.writeFileSync(asarPath, buff);
+            fs.writeFileSync(asarPath, buff, {originalFs: true});
             this.log(`Saved emotes.asar to ${asarPath}`);
             DataStore.setBDData("emoteVersion", Config.release.tag_name);
         }

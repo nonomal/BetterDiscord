@@ -12,9 +12,6 @@ if (!process.argv.includes("--vanilla")) {
     process.env.NODE_OPTIONS = "--no-force-async-hooks-checks";
     app.commandLine.appendSwitch("no-force-async-hooks-checks");
     
-    // Import our native api and register all the events
-    import("./modules/api");
-
     // Patch and replace the built-in BrowserWindow
     BrowserWindow.patchBrowserWindow();
     

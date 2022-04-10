@@ -5,13 +5,13 @@ const path = BetterDiscord.PathModule;
 
 export const RequireExtensions = {
     ".js": (module, filename) => {
-        const fileContent = BetterDiscord.FileManager.readFile(filename, "utf8").value;
+        const fileContent = BetterDiscord.FileManager.readFile(filename, "utf8");
         module.fileContent = fileContent;
         module._compile(fileContent);
         return module.exports;
     },
     ".json": (module, filename) => {
-        const fileContent = BetterDiscord.FileManager.readFile(filename, "utf8").value;
+        const fileContent = BetterDiscord.FileManager.readFile(filename, "utf8");
         module.fileContent = fileContent;
         module.exports = JSON.parse(fileContent);
 
@@ -22,7 +22,7 @@ export const RequireExtensions = {
 export default class Module {
     static resolveMainFile(mod, basePath) {
         const parent = path.extname(basePath) ? path.dirname(basePath) : basePath;
-        const files = BetterDiscord.FileManager.readDirectory(parent).value;
+        const files = BetterDiscord.FileManager.readDirectory(parent);
         if (!Array.isArray(files)) return null;
 
         for (const file of files) {
@@ -40,14 +40,14 @@ export default class Module {
     }
 
     static getExtension(mod) {
-        return path.extname(mod) || Reflect.ownKeys(RequireExtensions).find(e => BetterDiscord.FileManager.exists(mod + e).value);
+        return path.extname(mod) || Reflect.ownKeys(RequireExtensions).find(e => BetterDiscord.FileManager.exists(mod + e));
     }
 
     static getFilePath(basePath, mod) {
         if (!path.isAbsolute(mod)) mod = path.resolve(basePath, mod);
         const defaultExtension = path.extname(mod);
         if (!defaultExtension) {
-            const ext = Reflect.ownKeys(RequireExtensions).find(ext => BetterDiscord.FileManager.exists(mod + ext).value);
+            const ext = Reflect.ownKeys(RequireExtensions).find(ext => BetterDiscord.FileManager.exists(mod + ext));
             if (ext) {
                 mod = mod + ext;
             }
@@ -61,8 +61,7 @@ export default class Module {
         const filePath = this.getFilePath(basePath, mod);
         if (!BetterDiscord.FileManager.exists(filePath)) throw new Error(`Cannot find module ${mod}`);
         if (window.require.cache[filePath]) return window.require.cache[filePath].exports;
-        const {value: stats, error} = BetterDiscord.FileManager.getStats(filePath);
-        if (error) console.error({error, filePath});
+        const stats = BetterDiscord.FileManager.getStats(filePath);
         if (stats.isDirectory()) mod = this.resolveMainFile(mod, basePath);
         const ext = this.getExtension(filePath);
         let loader = RequireExtensions[ext];

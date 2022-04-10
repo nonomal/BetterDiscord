@@ -8,11 +8,6 @@ export function get(url, options = {}, callback) {
 
     const emitter = new EventEmitter();
     
-    if (typeof (options) === "function") {
-        callback = options;
-        options = null;
-    }
-
     callback(emitter);
 
     BetterDiscord.HttpManager.get(url, options, (error, res, body) => {

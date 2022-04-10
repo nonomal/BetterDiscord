@@ -6,6 +6,7 @@ Module.globalPaths.push(path.resolve(process.env.DISCORD_APP_PATH, "..", "app.as
 export * as FileManager from "./fileManager";
 export * as HttpManager from "./http";
 export * as ElectronModule from "./electron";
+export * as Crypto from "./crypto";
 
 // We can expose that without any issues.
 export const PathModule = __non_webpack_require__("path");
