@@ -57,16 +57,17 @@ export default class Module {
     }
 
     static _load(mod, basePath, createRequire) {
+        const originalReq = mod;
         if (!path.isAbsolute(mod)) mod = path.resolve(basePath, mod);
         const filePath = this.getFilePath(basePath, mod);
-        if (!BetterDiscord.FileManager.exists(filePath)) throw new Error(`Cannot find module ${mod}`);
+        if (!BetterDiscord.FileManager.exists(filePath)) throw new Error(`Cannot find module ${originalReq}`);
         if (window.require.cache[filePath]) return window.require.cache[filePath].exports;
         const stats = BetterDiscord.FileManager.getStats(filePath);
         if (stats.isDirectory()) mod = this.resolveMainFile(mod, basePath);
         const ext = this.getExtension(filePath);
         let loader = RequireExtensions[ext];
 
-        if (!loader) throw new Error(`Cannot find module ${filePath}`);
+        if (!loader) throw new Error(`Cannot find module ${originalReq}`);
         const module = window.require.cache[mod] = new Module(filePath, internalModule, createRequire(mod));
         loader(module, filePath);
         return module.exports;
