@@ -10,14 +10,6 @@
             "name": "Настройки",
             "general": {
                 "name": "Основные",
-                "emotes": {
-                    "name": "Система смайликов",
-                    "note": "Включает систему смайликов BD"
-                },
-                "publicServers": {
-                    "name": "Публичные сервера",
-                    "note": "Отображает кнопку публичных серверов"
-                },
                 "voiceDisconnect": {
                     "name": "Отключение голосового чата",
                     "note": "Отключает от голосового чата, когда Discord закрыт"
@@ -148,55 +140,6 @@
                     }
                 }
             }
-        },
-        "emotes": {
-            "name": "Смайлики",
-            "general": {
-                "name": "Основные",
-                "download": {
-                    "name": "Скачать Смайлики",
-                    "note": "Скачивает Смайлики, когда они устаревают"
-                },
-                "emoteMenu": {
-                    "name": "Меню Смайликов",
-                    "note": "Показать Twitch/избранные в меню смайликов"
-                },
-                "hideEmojiMenu": {
-                    "name": "Скрывать кнопку эмодзи",
-                    "note": "Скрывает меню эмодзи Discord, когда используется смайлики"
-                },
-                "autoCaps": {
-                    "name": "Автокапитализация Смайликов",
-                    "note": "Автоматическая замена строчных букв заглавными в командах смайликов"
-                },
-                "modifiers": {
-                    "name": "Показать модификаторы Смайликов",
-                    "note": "Включить модификаторы Смайликов (flip, spin, pulse, spin2, spin3, 1spin, 2spin, 3spin, tr, bl, br, shake, shake2, shake3, flap)"
-                },
-                "animateOnHover": {
-                    "name": "Анимировать при наведении",
-                    "note": "Анимировать только модификаторы смайликов при наведении"
-                }
-            },
-            "categories": {
-                "name": "Категории",
-                "twitchglobal": {
-                    "name": "Глобальные Twitch'a",
-                    "note": "Показать глобальные смайлики Twitch'a"
-                },
-                "twitchsubscriber": {
-                    "name": "Подписки Twitch",
-                    "note": "Показывать смайлики подписчиков Twitch"
-                },
-                "frankerfacez": {
-                    "name": "FrankerFaceZ",
-                    "note": "Показать смайлики из FFZ"
-                },
-                "bttv": {
-                    "name": "BetterTTV",
-                    "note": "Показать смайлики из BTTV"
-                }
-            }
         }
     },
     "Addons": {
@@ -250,35 +193,6 @@
         "openDetached": "Отдельное окно",
         "settings": "Настройки редактора",
         "editorTitle": "Редактор быстрого CSS"
-    },
-    "Emotes": {
-        "loading": "Загрузка смайликов в фоновом режиме",
-        "loaded": "Все смайлики успешно загружены",
-        "clearEmotes": "Отчистить данные Смайликов ",
-        "favoriteAction": "Избранное!",
-        "downloadFailed": "Загрузка не удалась",
-        "failureMessage": "BetterDiscord'у не удалось загрузить смайлики, проверьте подключение к интернету и брандмауэр."
-    },
-    "PublicServers": {
-        "button": "Публичные сервера",
-        "join": "Присоединился",
-        "joining": "Присоединение",
-        "joined": "Присоединился",
-        "loading": "Загрузка",
-        "loadMore": "Загрузить больше",
-        "notConnected": "Не подключен",
-        "connectionRequired": "Вы должны подключить свою учетную запись, чтобы присоединиться к серверам.",
-        "connectionError": "Ошибка соединения",
-        "connectionErrorMessage": "Произошла ошибка при подключении к DiscordServers.com, возможно, их сайт/api не упали.  Пожалуйста, повторите попытку позже.",
-        "pagination": "Страница {{page}} и {{count}}",
-        "search": "Поиск",
-        "connect": "Подключить",
-        "reconnect": "Переподключиться",
-        "categories": "Категории",
-        "keywords": "Ключевые слова",
-        "connection": "Подключён как: {{username}}#{{discriminator}}",
-        "results": "Показано {{start}}-{{end}} из {{total}} результатов в {{category}}",
-        "query": "для {{query}}"
     },
     "Modals": {
         "confirmAction": "Ты уверен?",

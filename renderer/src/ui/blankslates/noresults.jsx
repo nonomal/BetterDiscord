@@ -1,13 +1,14 @@
-import {React, DiscordModules} from "modules";
-import MagnifyingGlass from "../icons/magnifyingglass";
+import React from "@modules/react";
+import DiscordModules from "@modules/discordmodules";
 
-export default class NoResults extends React.Component {
-    render() {
-        return <div className={"bd-empty-results" + (this.props.className ? ` ${this.props.className}` : "")}>
-                    <MagnifyingGlass />
-                    <div className="bd-empty-results-text">
-                        {this.props.text || DiscordModules.Strings.SEARCH_NO_RESULTS || ""}
-                    </div>
-                </div>;
-    }
+import MagnifyingGlass from "@ui/icons/magnifyingglass";
+
+
+export default function NoResults(props) {
+    return <div className={"bd-empty-results" + (props.className ? ` ${props.className}` : "")}>
+                <MagnifyingGlass />
+                <div className="bd-empty-results-text">
+                    {props.text || DiscordModules.Strings.SEARCH_NO_RESULTS || ""}
+                </div>
+            </div>;
 }

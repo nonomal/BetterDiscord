@@ -1,20 +1,25 @@
-import Logger from "common/logger";
+import path from "path";
+import fs from "fs";
+
+import Logger from "@common/logger";
+
+import AddonError from "@structs/addonerror";
+
 import Settings from "./settingsmanager";
 import Events from "./emitter";
 import DataStore from "./datastore";
-import AddonError from "../structs/addonerror";
-import Toasts from "../ui/toasts";
-import DiscordModules from "./discordmodules";
+import React from "./react";
 import Strings from "./strings";
-import AddonEditor from "../ui/misc/addoneditor";
-import FloatingWindows from "../ui/floatingwindows";
+import ipc from "./ipc";
 
-const React = DiscordModules.React;
+import AddonEditor from "@ui/misc/addoneditor";
+import FloatingWindows from "@ui/floatingwindows";
+import Toasts from "@ui/toasts";
 
-const path = require("path");
-const fs = require("fs");
-const shell = require("electron").shell;
-const openItem = shell.openItem || shell.openPath;
+
+// const SWITCH_ANIMATION_TIME = 250;
+
+const openItem = ipc.openPath;
 
 const splitRegex = /[^\S\r\n]*?\r?(?:\r\n|\n)[^\S\r\n]*?\*[^\S\r\n]?/;
 const escapedAtRegex = /^\\@/;
@@ -220,7 +225,7 @@ export default class AddonManager {
             return error;
         }
 
-        if (shouldToast) Toasts.success(Strings.Addons.wasUnloaded.format({name: addon.name, version: addon.version}));
+        if (shouldToast) Toasts.success(Strings.Addons.wasLoaded.format({name: addon.name, version: addon.version}));
         this.emit("loaded", addon);
         
         if (!this.state[addon.id]) return this.state[addon.id] = false;
@@ -267,8 +272,21 @@ export default class AddonManager {
         if (!addon || addon.partial) return;
         if (this.state[addon.id]) return;
         this.state[addon.id] = true;
-        this.startAddon(addon);
-        this.saveState();
+        this.emit("enabled", addon);
+        // setTimeout(() => {
+            this.startAddon(addon);
+            this.saveState();
+        // }, SWITCH_ANIMATION_TIME);
+    }
+
+    enableAllAddons() {
+        const originalSetting = Settings.get("settings", "general", "showToasts", false);
+        Settings.set("settings", "general", "showToasts", false);
+        for (let a = 0; a < this.addonList.length; a++) {
+            this.enableAddon(this.addonList[a]);
+        }
+        Settings.set("settings", "general", "showToasts", originalSetting);
+        this.emit("batch");
     }
 
     disableAddon(idOrAddon) {
@@ -276,8 +294,21 @@ export default class AddonManager {
         if (!addon || addon.partial) return;
         if (!this.state[addon.id]) return;
         this.state[addon.id] = false;
-        this.stopAddon(addon);
-        this.saveState();
+        this.emit("disabled", addon);
+        // setTimeout(() => {
+            this.stopAddon(addon);
+            this.saveState();
+        // }, SWITCH_ANIMATION_TIME);
+    }
+
+    disableAllAddons() {
+        const originalSetting = Settings.get("settings", "general", "showToasts", false);
+        Settings.set("settings", "general", "showToasts", false);
+        for (let a = 0; a < this.addonList.length; a++) {
+            this.disableAddon(this.addonList[a]);
+        }
+        Settings.set("settings", "general", "showToasts", originalSetting);
+        this.emit("batch");
     }
 
     toggleAddon(id) {

@@ -1,17 +1,21 @@
-import {Config} from "data";
-import Logger from "common/logger";
+import path from "path";
+import vm from "vm";
+
+import Logger from "@common/logger";
+
+import Config from "@data/config";
+
+import AddonError from "@structs/addonerror";
+
 import AddonManager from "./addonmanager";
-import AddonError from "../structs/addonerror";
 import Settings from "./settingsmanager";
 import Strings from "./strings";
 import Events from "./emitter";
 
-import Toasts from "../ui/toasts";
-import Modals from "../ui/modals";
-import SettingsRenderer from "../ui/settings";
+import Toasts from "@ui/toasts";
+import Modals from "@ui/modals";
+import SettingsRenderer from "@ui/settings";
 
-const path = require("path");
-const vm = require("vm");
 
 const normalizeExports = name => `
 if (module.exports.default) {
@@ -44,7 +48,7 @@ export default new class PluginManager extends AddonManager {
         this.setupFunctions();
         Settings.registerPanel("plugins", Strings.Panels.plugins, {
             order: 3,
-            element: () => SettingsRenderer.getAddonPanel(Strings.Panels.plugins, this.addonList, this.state, {
+            element: SettingsRenderer.getAddonPanel(Strings.Panels.plugins, this.addonList, this.state, {
                 type: this.prefix,
                 folder: this.addonFolder,
                 onChange: this.togglePlugin.bind(this),
@@ -53,6 +57,8 @@ export default new class PluginManager extends AddonManager {
                 saveAddon: this.saveAddon.bind(this),
                 editAddon: this.editAddon.bind(this),
                 deleteAddon: this.deleteAddon.bind(this),
+                enableAll: this.enableAllAddons.bind(this),
+                disableAll: this.disableAllAddons.bind(this),
                 prefix: this.prefix
             })
         });
@@ -147,6 +153,7 @@ export default new class PluginManager extends AddonManager {
         }
         catch (err) {
             this.state[addon.id] = false;
+            this.emit("disabled", addon);
             Toasts.error(Strings.Addons.couldNotStart.format({name: addon.name, version: addon.version}));
             Logger.stacktrace(this.name, `${addon.name} v${addon.version} could not be started.`, err);
             return new AddonError(addon.name, addon.filename, Strings.Addons.enabled.format({method: "start()"}), {message: err.message, stack: err.stack}, this.prefix);

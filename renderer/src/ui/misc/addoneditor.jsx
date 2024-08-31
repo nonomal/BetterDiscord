@@ -1,63 +1,44 @@
-import {React, Strings} from "modules";
+import React from "@modules/react";
+import Strings from "@modules/strings";
 
-import Editor from "../customcss/editor";
-import Save from "../icons/save";
-import Edit from "../icons/edit";
+import Editor from "@ui/customcss/editor";
 
-export default class AddonEditor extends React.Component {
+import Save from "@ui/icons/save";
+import Edit from "@ui/icons/edit";
 
-    constructor(props) {
-        super(props);
+const {useState, useCallback, forwardRef, useImperativeHandle, useRef} = React;
 
-        this.hasUnsavedChanges = false;
-        this.onChange = this.onChange.bind(this);
-        this.save = this.save.bind(this);
-        this.openNative = this.openNative.bind(this);
-        this.update = this.update.bind(this);
 
-        this.controls = [
-            {label: React.createElement(Save, {size: "18px"}), tooltip: Strings.CustomCSS.save, onClick: this.save},
-            {label: React.createElement(Edit, {size: "18px"}), tooltip: Strings.CustomCSS.openNative, onClick: this.openNative}
-        ];
-    }
+export default forwardRef(function AddonEditor({content, language, save, openNative, id = "bd-addon-editor"}, ref) {
+    const editorRef = useRef(null);
+    const [hasUnsavedChanges, setUnsaved] = useState(false);
 
-    update() {
-        this.forceUpdate();
-    }
+    useImperativeHandle(ref, () => {
+        return {
+            resize() {editorRef.current.resize();},
+            showSettings() {editorRef.current.showSettings();},
+            get value() {return editorRef.current.getValue();},
+            set value(newValue) {editorRef.current.setValue(newValue);},
+            get hasUnsavedChanges() {return hasUnsavedChanges;}
+        };
+    }, [hasUnsavedChanges]);
 
-    updateEditor(newCSS) {
-        if (!this.editor) return;
-        this.editor.value = newCSS;
-    }
+    const popoutNative = useCallback(() => openNative?.(), [openNative]);
+    const onChange = useCallback(() => setUnsaved(true), []);
+    const saveAddon = useCallback((event, newCSS) => {
+        save?.(newCSS);
+        setUnsaved(false);
+    }, [save]);
 
-    get value() {return this.editor.session.getValue();}
-    set value(newValue) {
-        this.editor.setValue(newValue);
-    }
-
-    showSettings() {return this.editor.keyBinding.$defaultHandler.commands.showSettingsMenu.exec(this.editor);}
-    resize() {return this.editor.resize();}
-
-    setEditorRef(editor) {
-        this.editor = editor;
-        if (this.props.editorRef && typeof(this.props.editorRef.current) !== "undefined") this.props.editorRef.current = editor;
-        else if (this.props.editorRef) this.props.editorRef = editor;
-    }
-
-    render() {
-        return <Editor ref={this.setEditorRef.bind(this)} language={this.props.language} id={this.props.id || "bd-addon-editor"} controls={this.controls} value={this.props.content} onChange={this.onChange} />;
-    }
-
-    onChange() {
-        this.hasUnsavedChanges = true;
-    }
-
-    save(event, content) {
-        this.hasUnsavedChanges = false;
-        if (this.props.save) this.props.save(content);
-    }
-
-    openNative() {
-        if (this.props.openNative) this.props.openNative();
-    }
-}
+    return <Editor
+                ref={editorRef}
+                language={language}
+                id={id}
+                controls={[
+                    {label: <Save size="18px" />, tooltip: Strings.CustomCSS.save, onClick: saveAddon},
+                    {label: <Edit size="18px" />, tooltip: Strings.CustomCSS.openNative, onClick: popoutNative}
+                ]}
+                value={content}
+                onChange={onChange}
+            />;
+});

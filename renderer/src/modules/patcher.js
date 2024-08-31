@@ -3,9 +3,11 @@
  * instead of the original function. Can also alter arguments and return values.
  */
 
- import Logger from "common/logger";
+ import Logger from "@common/logger";
+
  import DiscordModules from "./discordmodules";
  import WebpackModules from "./webpackmodules";
+ 
  
  export default class Patcher {
  
@@ -48,7 +50,7 @@
      }
  
      static makeOverride(patch) {
-         return function () {
+         return function BDPatcher() {
              let returnValue;
              if (!patch.children || !patch.children.length) return patch.originalFunction.apply(this, arguments);
              for (const superPatch of patch.children.filter(c => c.type === "before")) {

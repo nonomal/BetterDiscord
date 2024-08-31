@@ -1,26 +1,27 @@
 import request from "request";
 import fileSystem from "fs";
-import {Config} from "data";
 import path from "path";
 
-import Logger from "common/logger";
+import Logger from "@common/logger";
+
+import Config from "@data/config";
+
+import {comparator as semverComparator, regex as semverRegex} from "@structs/semver";
 
 import Events from "./emitter";
 import IPC from "./ipc";
 import Strings from "./strings";
 import DataStore from "./datastore";
+import React from "./react";
 import Settings from "./settingsmanager";
 import PluginManager from "./pluginmanager";
 import ThemeManager from "./thememanager";
 import WebpackModules from "./webpackmodules";
 
-import Toasts from "../ui/toasts";
-import Notices from "../ui/notices";
-import Modals from "../ui/modals";
-import UpdaterPanel from "../ui/updater";
-import DiscordModules from "./discordmodules";
-
-const React = DiscordModules.React;
+import Toasts from "@ui/toasts";
+import Notices from "@ui/notices";
+import Modals from "@ui/modals";
+import UpdaterPanel from "@ui/updater";
 
 
 const UserSettingsWindow = WebpackModules.getByProps("updateAccount");
@@ -86,7 +87,7 @@ export class CoreUpdater {
         const data = await resp.json();
         this.apiData = data;
         const remoteVersion = data.tag_name.startsWith("v") ? data.tag_name.slice(1) : data.tag_name;
-        this.hasUpdate = remoteVersion > Config.version;
+        this.hasUpdate = semverComparator(Config.version, remoteVersion) > 0;
         this.remoteVersion = remoteVersion;
         if (!this.hasUpdate || !showNotice) return;
 
@@ -134,24 +135,6 @@ export class CoreUpdater {
     }
 }
 
-const semverRegex = /^[0-9]+\.[0-9]+\.[0-9]+$/;
-
-/**
- * This works on basic semantic versioning e.g. "1.0.0".
- * 
- * @param {string} currentVersion
- * @param {string} content
- * @returns {boolean} whether there is an update
- */
-function semverComparator(currentVersion, remoteVersion) {
-    currentVersion = currentVersion.split(".").map((e) => {return parseInt(e);});
-    remoteVersion = remoteVersion.split(".").map((e) => {return parseInt(e);});
-
-    if (remoteVersion[0] > currentVersion[0]) return true;
-    else if (remoteVersion[0] == currentVersion[0] && remoteVersion[1] > currentVersion[1]) return true;
-    else if (remoteVersion[0] == currentVersion[0] && remoteVersion[1] == currentVersion[1] && remoteVersion[2] > currentVersion[2]) return true;
-    return false;
-}
 
 
 class AddonUpdater {
@@ -195,9 +178,9 @@ class AddonUpdater {
         if (this.pending.includes(filename)) return;
         const info = this.cache[path.basename(filename)];
         if (!info) return;
-        let hasUpdate = info.update > currentVersion;
+        let hasUpdate = info.version > currentVersion;
         if (semverRegex.test(info.version) && semverRegex.test(currentVersion)) {
-            hasUpdate = semverComparator(currentVersion, info.version);
+            hasUpdate = semverComparator(currentVersion, info.version) > 0;
         }
         if (!hasUpdate) return;
         this.pending.push(filename);
