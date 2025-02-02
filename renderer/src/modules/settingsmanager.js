@@ -1,9 +1,12 @@
-import {SettingsConfig} from "data";
-import Logger from "common/logger";
+import Logger from "@common/logger";
+
+import SettingsConfig from "@data/settings";
+
 import DataStore from "./datastore";
 import Events from "./emitter";
 import DiscordModules from "./discordmodules";
 import Strings from "./strings";
+
 
 export default new class SettingsManager {
 
@@ -11,13 +14,10 @@ export default new class SettingsManager {
         this.state = {};
         this.collections = [];
         this.panels = [];
-        this.updateStrings = this.updateStrings.bind(this);
     }
 
     initialize() {
         this.registerCollection("settings", "Settings", SettingsConfig);
-        Events.on("strings-updated", this.updateStrings);
-        // this.patchSections();
     }
 
     registerCollection(id, name, settings, button = null) {
@@ -31,7 +31,6 @@ export default new class SettingsManager {
         });
         this.setupCollection(id);
         this.loadCollection(id);
-        this.updateStrings();
     }
 
     removeCollection(id) {
@@ -44,7 +43,12 @@ export default new class SettingsManager {
     registerPanel(id, name, options) {
         if (this.panels.find(p => p.id == id)) return Logger.error("Settings", "Already have a panel with id " + id);
         const {element, onClick, order = 1} = options;
-        const section = {id, order, label: name, section: id};
+        const section = {
+            id,
+            order,
+            get label() {return Strings.Panels[id].toString() || name;},
+            section: id
+        };
         if (onClick) section.clickListener = onClick;
         if (element) section.element = element instanceof DiscordModules.React.Component ? () => DiscordModules.React.createElement(element, {}) : typeof(element) == "function" ? element : () => element;
         this.panels.push(section);
@@ -66,27 +70,82 @@ export default new class SettingsManager {
     setupCollection(id) {
         const collection = this.collections.find(c => c.id == id);
         if (!collection) return;
-        const categories = collection.settings;
+
+        // Initialize state for collection
         if (!this.state[collection.id]) this.state[collection.id] = {};
+
+        // Use a getter so the collection name auto translates
+        const collectionName = collection.name;
+        Object.defineProperty(collection, "name", {
+            enumerable: true,
+            get: () => Strings.Collections[collection.id]?.name?.toString() || collectionName
+        });
+
+        const categories = collection.settings;
+        
         for (let cc = 0; cc < categories.length; cc++) {
             const category = categories[cc];
-            if (category.type != "category") {if (!this.state[collection.id].hasOwnProperty(category.id)) this.state[collection.id][category.id] = category.value;}
-            else {
-                if (!this.state[collection.id].hasOwnProperty(category.id)) this.state[collection.id][category.id] = {};
-                for (let s = 0; s < category.settings.length; s++) {
-                    const setting = category.settings[s];
-                    if (!this.state[collection.id][category.id].hasOwnProperty(setting.id)) this.state[collection.id][category.id][setting.id] = setting.value;
-                    if (setting.hasOwnProperty("disabled")) continue;
-                    if (!setting.enableWith && !setting.disableWith) continue;
-                    const pathString = setting.enableWith || setting.disableWith;
-                    const path = this.getPath(pathString.split("."), collection.id, category.id);
-                    Object.defineProperty(setting, "disabled", {
-                        get: () => {
-                            const other = this.state[path.collection][path.category][path.setting];
-                            return setting.enableWith ? !other : other;
-                        }
-                    });
+
+            // Initialize state for this category in this collection
+            if (!this.state[collection.id].hasOwnProperty(category.id)) this.state[collection.id][category.id] = {};
+
+            // Use a getter so category name auto translates
+            const categoryName = category.name;
+            Object.defineProperty(category, "name", {
+                enumerable: true,
+                get: () => Strings.Collections[collection.id]?.[category.id]?.name?.toString() || categoryName
+            });
+
+            
+            for (let s = 0; s < category.settings.length; s++) {
+                const setting = category.settings[s];
+
+                // Set initial state as the initial value for this setting
+                if (!this.state[collection.id][category.id].hasOwnProperty(setting.id)) this.state[collection.id][category.id][setting.id] = setting.value;
+
+                // Move value to defaultValue for internal use
+                setting.defaultValue = setting.value;
+
+                // Use a getter so the setting name and note auto translate
+                const settingName = setting.name;
+                const settingNote = setting.note;
+                Object.defineProperties(setting, {
+                    name: {
+                        enumerable: true,
+                        get: () => Strings.Collections[collection.id]?.[category.id]?.[setting.id]?.name?.toString() || settingName
+                    },
+                    note: {
+                        enumerable: true,
+                        get: () => Strings.Collections[collection.id]?.[category.id]?.[setting.id]?.note?.toString() || settingNote
+                    }
+                });
+
+                // Use a getter for option labels to auto translate
+                if (setting.options) {
+                    for (const opt of setting.options) {
+                        const optLabel = opt.label;
+                        Object.defineProperty(opt, "label", {
+                            enumerable: true,
+                            get: () => {
+                                const translations = Strings.Collections[collection.id]?.[category.id]?.[setting.id]?.options;
+                                return translations?.[opt.id]?.toString() || translations?.[opt.value]?.toString() || optLabel;
+                            }
+                        });
+                    }
                 }
+
+                // If the setting doesn't use enableWith XOR disableWith then move on
+                if (setting.hasOwnProperty("disabled")) continue;
+                if (!setting.enableWith && !setting.disableWith) continue;
+                const pathString = setting.enableWith || setting.disableWith;
+                const path = this.getPath(pathString.split("."), collection.id, category.id);
+                Object.defineProperty(setting, "disabled", {
+                    enumerable: true,
+                    get: () => {
+                        const other = this.state[path.collection][path.category][path.setting];
+                        return setting.enableWith ? !other : other;
+                    }
+                });
             }
         }
     }
@@ -128,6 +187,28 @@ export default new class SettingsManager {
         this.saveCollection(id); // in case new things were added
     }
 
+    resetCollection(id) {
+        const collection = this.collections.find(c => c.id == id);
+        if (!collection) return;
+        const categories = collection.settings;
+        for (let cc = 0; cc < categories.length; cc++) {
+            const category = categories[cc];
+            if (category.type != "category") {
+                // console.log("cat", collection.id, category.id, this.get(collection.id, category.id), category.value);
+                if (this.get(collection.id, category.id) == category.defaultValue) continue;
+                this.set(collection.id, category.id, category.defaultValue);
+            }
+            else {
+                for (let s = 0; s < category.settings.length; s++) {
+                    const setting = category.settings[s];
+                    // console.log("setting", collection.id, category.id, setting.id, this.get(collection.id, category.id, setting.id), setting.defaultValue);
+                    if (this.get(collection.id, category.id, setting.id) == setting.defaultValue) continue;
+                    this.set(collection.id, category.id, setting.id, setting.defaultValue);
+                }
+            }
+        }
+    }
+
     onSettingChange(collection, category, id, value) {
         this.state[collection][category][id] = value;
         Events.dispatch("setting-updated", collection, category, id, value);
@@ -166,40 +247,5 @@ export default new class SettingsManager {
         };
         Events.on("setting-updated", handler);
         return () => {Events.off("setting-updated", handler);};
-    }
-
-    updateStrings() {
-        // Update settings collections
-        for (let c = 0; c < this.collections.length; c++) {
-            const collection = this.collections[c];
-            const CS = Strings.Collections[collection.id];
-            if (!CS) continue;
-            collection.name = CS.name || collection.name;
-            const categories = this.collections[c].settings;
-            for (let cat = 0; cat < categories.length; cat++) {
-                const category = categories[cat];
-                const CatStr = CS[category.id];
-                if (!CatStr) continue;
-                category.name = CatStr.name || category.name;
-                for (let s = 0; s < category.settings.length; s++) {
-                    const setting = category.settings[s];
-                    const SetStr = CatStr[setting.id];
-                    if (!SetStr) continue;
-                    setting.name = SetStr.name || setting.name;
-                    setting.note = SetStr.note || setting.note;
-                    if (!setting.options) continue;
-                    for (const opt of setting.options) {
-                        opt.label = SetStr.options[opt.id] || SetStr.options[opt.value] || opt.label;
-                    }
-                }
-            }
-        }
-
-        // Update panel labels
-        for (let p = 0; p < this.panels.length; p++) {
-            const panel = this.panels[p];
-            const Str = Strings.Panels[panel.id];
-            panel.label = Str || panel.label;
-        }
     }
 };

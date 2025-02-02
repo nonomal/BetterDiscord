@@ -2,21 +2,14 @@
     "Panels": {
         "plugins": "Lisäosat",
         "themes": "Teemat",
-        "customcss": "Mukautettu CSS"
+        "customcss": "Mukautettu CSS",
+        "updates": "Päivitykset"
     },
     "Collections": {
         "settings": {
             "name": "Asetukset",
             "general": {
                 "name": "Yleinen",
-                "emotes": {
-                    "name": "Hymiö-järjestelmä",
-                    "note": "Ottaa käyttöön BD:n hymiö-järjestelmän."
-                },
-                "publicServers": {
-                    "name": "Julkiset Palvelimet",
-                    "note": "Näytä julkisten palvelimien nappi"
-                },
                 "voiceDisconnect": {
                     "name": "Katkaise puhelu",
                     "note": "Katkaise puhelu, kun suljet Discordin"
@@ -147,55 +140,6 @@
                     }
                 }
             }
-        },
-        "emotes": {
-            "name": "Hymiöt",
-            "general": {
-                "name": "Yleinen",
-                "download": {
-                    "name": "Lataa hymiöitä",
-                    "note": "Lataa hymiöit aina, kun ne ovat vanhentuneita"
-                },
-                "emoteMenu": {
-                    "name": "Hymiövalikko",
-                    "note": "Näytä Twitch/Suosikkihymiöt hymiövalikossa"
-                },
-                "hideEmojiMenu": {
-                    "name": "Piilota hymiövalikko",
-                    "note": "Piilottaa Discordin emoji-menun, kun käytetään hymiövalikkoa"
-                },
-                "autoCaps": {
-                    "name": "Emoten automaattinen isojen kirjainten käyttö",
-                    "note": "Laita isolla kirjaimella hymiökomennot automaattisesti"
-                },
-                "modifiers": {
-                    "name": "Näytä hymiö-muokkaimet",
-                    "note": "Ota käyttöön hymiömodit (käännä, spin, pulssi, spin2, spin3, 1spin, 2spin, 3spin, tr, bl, br, shake, shake2, shake3, flap)"
-                },
-                "animateOnHover": {
-                    "name": "Animoi leijuminen",
-                    "note": "Animoi vain hymiön muokkaukset viemällä kursori sen kohdalle"
-                }
-            },
-            "categories": {
-                "name": "Kategoriat",
-                "twitchglobal": {
-                    "name": "Twitchin Yleiset",
-                    "note": "Näytä Twitchin yleiset hymiöt"
-                },
-                "twitchsubscriber": {
-                    "name": "Twitch-tilaajat",
-                    "note": "Näytä Twitch-tilauksen hymiöt"
-                },
-                "frankerfacez": {
-                    "name": "FrankerFaceZ",
-                    "note": "Näytä hymiöt FFZ:sta"
-                },
-                "bttv": {
-                    "name": "BetterTTV",
-                    "note": "Näytä hymiöt BTTV:stä"
-                }
-            }
         }
     },
     "Addons": {
@@ -236,7 +180,8 @@
         "wasUnloaded": "{{name}} purettiin.",
         "blankSlateHeader": "Sinulla ei ole yhtään {{type}}!",
         "blankSlateMessage": "Nappaa joitain [tältä verkkosivustolta]({{link}}) ja lisää ne kansioon {{type}}.",
-        "isEnabled": "Otettu käyttöön"
+        "isEnabled": "Otettu käyttöön",
+        "wasLoaded": "\n{{name}} v{{version}} ladattiin."
     },
     "CustomCSS": {
         "confirmationText": "Muokatussa CSS:ssä on tallentamattomia muutoksia. Tämän ikkunan sulkeminen menettää kaikki muutokset.",
@@ -246,35 +191,6 @@
         "openDetached": "Irrota ikkuna",
         "settings": "Muokkaajan asetukset",
         "editorTitle": "Mukautettu CSS-muokkaaja"
-    },
-    "Emotes": {
-        "loading": "Hymiöiden lataaminen taustalla ei lataudu uudelleen.",
-        "loaded": "Kaikki hymiöt on ladattu onnistuneesti.",
-        "clearEmotes": "Tyhjennä hymiö-tiedot",
-        "favoriteAction": "Suosikki!",
-        "downloadFailed": "Lataus epäonnistui",
-        "failureMessage": "BetterDiscord ei pystynyt lataamaan hymiöitä. Tarkista Internet-yhteytesi ja palomuurisi."
-    },
-    "PublicServers": {
-        "button": "julkinen",
-        "join": "Liity",
-        "joining": "Liitytään",
-        "joined": "Liitytty",
-        "loading": "Ladataan",
-        "loadMore": "Ladataan lisää",
-        "notConnected": "Et ole yhdistetty",
-        "connectionRequired": "Sinun on yhdistettävä tilisi, jotta voit liittyä palvelimiin.",
-        "connectionError": "Yhteysvika",
-        "connectionErrorMessage": "Yhteyden muodostamisessa DiscordServers.comiin tapahtui virhe. On mahdollista, että heidän verkkosivustonsa/api on poissa käytöstä. Yritä uudelleen myöhemmin.",
-        "pagination": "Sivu {{sivu}} / {{count}}",
-        "search": "Etsi",
-        "connect": "Yhdistä",
-        "reconnect": "Yhdistä uudelleen",
-        "categories": "Kategoriat",
-        "keywords": "Avainsanat",
-        "connection": "Yhdistetty nimellä: {{username}}#{{discrinator}}",
-        "results": "Näytetään {{start}}-{{end}} / {{total}} tulosta luokassa {{category}}",
-        "query": "haulle {{kysely}}"
     },
     "Modals": {
         "confirmAction": "Oletko varma?",
@@ -306,5 +222,24 @@
     "WindowPrefs": {
         "enabledInfo": "Tämä vaihtoehto vaatii läpinäkyvän teeman toimiakseen kunnolla. Windowsissa tämä voi katkaista aerosnapsauksen ja maksimoimisen.\n\nJotta Discord tulisi voimaan, se on käynnistettävä uudelleen. Haluatko käynnistää uudelleen nyt?",
         "disabledInfo": "Jotta se tulisi voimaan, Discord on käynnistettävä uudelleen. Haluatko käynnistää uudelleen nyt?"
+    },
+    "Notices": {
+        "moreInfo": "Enemmän tietoa"
+    },
+    "Updater": {
+        "updateFailed": "Päivitys epäonnistui",
+        "updateFailedMessage": "BetterDiscordin päivitys epäonnistui. Lataa asennusohjelman uusin versio verkkosivustoltamme (https://betterdiscord.app/) ja asenna se uudelleen.",
+        "updateSuccessful": "Päivittäminen onnistui!",
+        "updateAvailable": "BetterDiscordilla on uusi päivitys",
+        "addonUpdatesAvailable": "BetterDiscord on löytänyt päivityksiä {{count}}:lle {{type}}:lle!",
+        "addonUpdated": "{{name}} on päivitetty versioon {{version}}!",
+        "checking": "Tarkistetaan päivityksiä!",
+        "finishedChecking": "Päivitysten tarkistaminen on valmis!",
+        "checkForUpdates": "Tarkista päivitykset!",
+        "updateAll": "Päivitä kaikki!",
+        "noUpdatesAvailable": "Päivityksiä ei ole saatavilla.",
+        "versionAvailable": "Versio {{version}} on saatavilla!",
+        "upToDateBlankslate": "Kaikki sinun {{type}} näyttävät olevan ajan tasalla!",
+        "updateButton": "Päivitä!"
     }
 }

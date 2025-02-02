@@ -9,14 +9,6 @@
             "name": "Einstellungen",
             "general": {
                 "name": "Allgemein",
-                "emotes": {
-                    "name": "Emotesystem",
-                    "note": "Aktiviert das BD-Emotesystem"
-                },
-                "publicServers": {
-                    "name": "Öffentliche Server",
-                    "note": "Zeigt den Knopf für öffentliche Server"
-                },
                 "voiceDisconnect": {
                     "name": "Verbindung zum Sprachchat trennen",
                     "note": "Trennt beim Schließen von Discord die Verbindung zum Sprachchat"
@@ -111,55 +103,6 @@
                     "note": "Speichert alle Ausgaben aus der Konsole in die \\\"debug.log\\\" Datei im BetterDiscord Verzeichnis"
                 }
             }
-        },
-        "emotes": {
-            "name": "Emotes",
-            "general": {
-                "name": "Allgemein",
-                "download": {
-                    "name": "Emotes herunterladen",
-                    "note": "Lade Emotes herunter, wenn sie nicht mehr aktuell sind"
-                },
-                "emoteMenu": {
-                    "name": "Emote-Menü",
-                    "note": "Twitch- und favorisierte Emotes im Emote-Menü anzeigen"
-                },
-                "hideEmojiMenu": {
-                    "name": "Emoji-Menü verstecken",
-                    "note": "Versteckt Discords Emoji-Menü bei der Nutzung des Emote-Menüs"
-                },
-                "autoCaps": {
-                    "name": "Automatische Großschreibung von Emotes",
-                    "note": "Emote-Befehle werden automatisch großgeschrieben"
-                },
-                "modifiers": {
-                    "name": "Emote-Modifikatoren anzeigen",
-                    "note": "Aktiviert Emote-Modifikatoren (flip, spin, pulse, spin2, spin3, 1spin, 2spin, 3spin, tr, bl, br, shake, shake2, shake3, flap)"
-                },
-                "animateOnHover": {
-                    "name": "Beim Hovern animieren",
-                    "note": "Animiert Emote-Modifikatoren nur beim Hovern über dem Emote"
-                }
-            },
-            "categories": {
-                "name": "Kategorien",
-                "twitchglobal": {
-                    "name": "Twitch Global",
-                    "note": "Twitch-Global-Emotes anzeigen"
-                },
-                "twitchsubscriber": {
-                    "name": "Twitch Subscribers",
-                    "note": "Twitch-Subscriber-Emotes anzeigen"
-                },
-                "frankerfacez": {
-                    "name": "FrankerFaceZ",
-                    "note": "FFZ-Emotes anzeigen"
-                },
-                "bttv": {
-                    "name": "BetterTTV",
-                    "note": "BTTV-Emotes anzeigen"
-                }
-            }
         }
     },
     "Addons": {
@@ -211,35 +154,6 @@
         "openDetached": "Fenster trennen",
         "settings": "Editor-Einstellungen",
         "editorTitle": "Custom-CSS-Editor"
-    },
-    "Emotes": {
-        "loading": "Lade alle Emotes im Hintergrund.",
-        "loaded": "Alle Emotes erfolgreich geladen.",
-        "clearEmotes": "Emote-Daten löschen",
-        "favoriteAction": "Favorisieren!",
-        "downloadFailed": "Download fehlgeschlagen",
-        "failureMessage": "BetterDiscord konnte die Emotes nicht herunterladen, bitte überprüfe deine Internetverbindung und Firewall."
-    },
-    "PublicServers": {
-        "button": "public",
-        "join": "Beitreten",
-        "joining": "Trete bei",
-        "joined": "Beigetreten",
-        "loading": "Laden",
-        "loadMore": "Mehr laden",
-        "notConnected": "Nicht mit DiscordServers.com verbunden!",
-        "connectionRequired": "Du musst dein Konto verbinden, um Server beitreten zu können.",
-        "connectionError": "Verbindungsfehler",
-        "connectionErrorMessage": "Bei der Verbindung zu DiscordServers.com ist ein Fehler aufgetreten. Es ist möglich, dass die Website/Api offline ist. Versuch es später noch einmal.",
-        "pagination": "Seite {{page}} von {{count}}",
-        "search": "Suchen",
-        "connect": "Verbinden",
-        "reconnect": "Wiederverbinden",
-        "categories": "Kategorien",
-        "keywords": "Schlüsselwörter",
-        "connection": "Verbunden als: {{username}}#{{discriminator}}",
-        "results": "{{start}}-{{end}} von {{total}} Ergebnissen in {{category}} angezeigt",
-        "query": "für {{query}}"
     },
     "Modals": {
         "confirmAction": "Bist du dir sicher?",

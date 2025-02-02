@@ -1,4 +1,5 @@
-import {ipcMain as ipc, BrowserWindow, app, dialog} from "electron";
+import {spawn} from "child_process";
+import {ipcMain as ipc, BrowserWindow, app, dialog, systemPreferences, shell} from "electron";
 
 import * as IPCEvents from "common/constants/ipcevents";
 
@@ -32,9 +33,14 @@ const getPath = (event, pathReq) => {
     event.returnValue = returnPath;
 };
 
-const relaunch = () => {
+const openPath = (event, path) => {
+    if (process.platform === "win32") spawn("explorer.exe", [path]);
+    else shell.openPath(path);
+};
+
+const relaunch = (event, args = []) => {
+    app.relaunch({args: process.argv.slice(1).concat(Array.isArray(args) ? args : [args])});
     app.quit();
-    app.relaunch();
 };
 
 const runScript = async (event, script) => {
@@ -77,6 +83,16 @@ const inspectElement = async event => {
 const setMinimumSize = (event, width, height) => {
     const window = BrowserWindow.fromWebContents(event.sender);
     window.setMinimumSize(width, height);
+};
+
+const setWindowSize = (event, width, height) => {
+    const window = BrowserWindow.fromWebContents(event.sender);
+    window.setSize(width, height);
+};
+
+const getAccentColor = () => {
+    // intentionally left blank so that fallback colors will be used
+    return systemPreferences.getAccentColor() || "";
 };
 
 const stopDevtoolsWarning = event => event.sender.removeAllListeners("devtools-opened");
@@ -130,14 +146,17 @@ export default class IPCMain {
     static registerEvents() {
         try {
             ipc.on(IPCEvents.GET_PATH, getPath);
+            ipc.on(IPCEvents.OPEN_PATH, openPath);
             ipc.on(IPCEvents.RELAUNCH, relaunch);
             ipc.on(IPCEvents.OPEN_DEVTOOLS, openDevTools);
             ipc.on(IPCEvents.CLOSE_DEVTOOLS, closeDevTools);
             ipc.on(IPCEvents.TOGGLE_DEVTOOLS, toggleDevTools);
             ipc.on(IPCEvents.INSPECT_ELEMENT, inspectElement);
             ipc.on(IPCEvents.MINIMUM_SIZE, setMinimumSize);
+            ipc.on(IPCEvents.WINDOW_SIZE, setWindowSize);
             ipc.on(IPCEvents.DEVTOOLS_WARNING, stopDevtoolsWarning);
             ipc.on(IPCEvents.REGISTER_PRELOAD, registerPreload);
+            ipc.handle(IPCEvents.GET_ACCENT_COLOR, getAccentColor);
             ipc.handle(IPCEvents.RUN_SCRIPT, runScript);
             ipc.handle(IPCEvents.OPEN_DIALOG, openDialog);
             ipc.handle(IPCEvents.OPEN_WINDOW, createBrowserWindow);

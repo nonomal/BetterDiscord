@@ -1,15 +1,18 @@
-import {Config} from "data";
+import path from "path";
+
+import Config from "@data/config";
+
+import AddonError from "@structs/addonerror";
+
 import AddonManager from "./addonmanager";
-import AddonError from "../structs/addonerror";
 import Settings from "./settingsmanager";
 import DOMManager from "./dommanager";
 import Strings from "./strings";
 
-import Toasts from "../ui/toasts";
-import Modals from "../ui/modals";
-import SettingsRenderer from "../ui/settings";
+import Toasts from "@ui/toasts";
+import Modals from "@ui/modals";
+import SettingsRenderer from "@ui/settings";
 
-const path = require("path");
 
 export default new class ThemeManager extends AddonManager {
     get name() {return "ThemeManager";}
@@ -23,7 +26,7 @@ export default new class ThemeManager extends AddonManager {
         const errors = super.initialize();
         Settings.registerPanel("themes", Strings.Panels.themes, {
             order: 4,
-            element: () => SettingsRenderer.getAddonPanel(Strings.Panels.themes, this.addonList, this.state, {
+            element: SettingsRenderer.getAddonPanel(Strings.Panels.themes, this.addonList, this.state, {
                 type: this.prefix,
                 folder: this.addonFolder,
                 onChange: this.toggleTheme.bind(this),
@@ -32,6 +35,8 @@ export default new class ThemeManager extends AddonManager {
                 saveAddon: this.saveAddon.bind(this),
                 editAddon: this.editAddon.bind(this),
                 deleteAddon: this.deleteAddon.bind(this),
+                enableAll: this.enableAllAddons.bind(this),
+                disableAll: this.disableAllAddons.bind(this),
                 prefix: this.prefix
             })
         });

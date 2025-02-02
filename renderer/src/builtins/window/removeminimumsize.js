@@ -1,5 +1,8 @@
-import Builtin from "../../structs/builtin";
-import IPC from "../../modules/ipc";
+import Builtin from "@structs/builtin";
+
+import IPC from "@modules/ipc";
+import Modals from "@ui/modals";
+import Strings from "@modules/strings";
 
 export default new class RemoveMinimumSize extends Builtin {
     get name() {return "RemoveMinimumSize";}
@@ -7,10 +10,20 @@ export default new class RemoveMinimumSize extends Builtin {
     get id() {return "removeMinimumSize";}
 
     enabled() {
-        IPC.setMinimumSize(1, 1);
+        this.showModal();
     }
 
     disabled() {
-        IPC.setMinimumSize(940, 500);
+        this.showModal();
+    }
+
+    showModal() {
+        if (!this.initialized) return;
+        Modals.showConfirmationModal(Strings.Modals.additionalInfo, Strings.Modals.restartPrompt, {
+            confirmText: Strings.Modals.restartNow,
+            cancelText: Strings.Modals.restartLater,
+            danger: true,
+            onConfirm: () => IPC.relaunch()
+        });
     }
 };

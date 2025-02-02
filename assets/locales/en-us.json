@@ -10,14 +10,6 @@
             "name": "Settings",
             "general": {
                 "name": "General",
-                "emotes": {
-                    "name": "Emote System",
-                    "note": "Enables BD's emote system"
-                },
-                "publicServers": {
-                    "name": "Public Servers",
-                    "note": "Display public servers button"
-                },
                 "voiceDisconnect": {
                     "name": "Voice Disconnect",
                     "note": "Disconnect from voice server when closing Discord"
@@ -29,6 +21,29 @@
                 "mediaKeys": {
                     "name": "Disable Media Keys",
                     "note": "Prevents Discord from hijacking your media keys after playing a video."
+                },
+                "bdContextMenu": {
+                    "name": "Settings Context Menu",
+                    "note": "Adds a BetterDiscord subsection to the settings context menu."
+                },
+                "themeAttributes": {
+                    "name": "Theme Attributes",
+                    "note": "Adds attributes to various elements to assist in theming."
+                }
+            },
+            "store": {
+                "name": "Addon Store",
+                "bdAddonStore": {
+                    "name": "Enable Addon Store",
+                    "note": "Enables the BetterDiscord Addon Store."
+                },
+                "alwaysEnable": {
+                    "name": "Always Enable",
+                    "note": "When enabled by default addons downloaded via the addon store will be enabled."
+                },
+                "addonEmbeds": {
+                    "name": "Addon Embeds",
+                    "note": "Embeds the addon store cards into chat."
                 }
             },
             "window": {
@@ -44,6 +59,10 @@
                 "frame": {
                     "name": "Window Frame",
                     "note": "Adds the native os window frame to the main window"
+                },
+                "inAppTrafficLights": {
+                    "name": "Use In App Traffic Lights",
+                    "note": "Instead of using the OS traffic lights it will use a in app one"
                 }
             },
             "addons": {
@@ -59,6 +78,14 @@
                         "detached": "Detached Window",
                         "system": "System Editor"
                     }
+                },
+                "checkForUpdates": {
+                    "name": "Automatically Check For Updates",
+                    "note": "Periodically checks for updates to your addons and core BD"
+                },
+                "updateInterval": {
+                    "name": "Update Check Interval",
+                    "note": "How often to check for addon/core updates"
                 }
             },
             "customcss": {
@@ -114,6 +141,12 @@
                 "devTools": {
                     "name": "DevTools",
                     "note": "Enables toggling DevTools with ctrl+shift+i"
+                },
+                "recovery": {
+                    "name": "Recovery",
+                    "note": "Enables the ability to attempt to save discord without reloading",
+                    "button": "Attempt to recover Discord",
+                    "report": "Report on Github"
                 }
             },
             "editor": {
@@ -148,61 +181,16 @@
                     }
                 }
             }
-        },
-        "emotes": {
-            "name": "Emotes",
-            "general": {
-                "name": "General",
-                "download": {
-                    "name": "Download Emotes",
-                    "note": "Download emotes whenever they are out of date"
-                },
-                "emoteMenu": {
-                    "name": "Emote Menu",
-                    "note": "Show Twitch/Favourite emotes in emote menu"
-                },
-                "hideEmojiMenu": {
-                    "name": "Hide Emoji Menu",
-                    "note": "Hides Discord's emoji menu when using emote menu"
-                },
-                "autoCaps": {
-                    "name": "Emote Autocapitalization",
-                    "note": "Autocapitalize emote commands"
-                },
-                "modifiers": {
-                    "name": "Show Emote Modifiers",
-                    "note": "Enable emote mods (flip, spin, pulse, spin2, spin3, 1spin, 2spin, 3spin, tr, bl, br, shake, shake2, shake3, flap)"
-                },
-                "animateOnHover": {
-                    "name": "Animate On Hover",
-                    "note": "Only animate the emote modifiers on hover"
-                }
-            },
-            "categories": {
-                "name": "Categories",
-                "twitchglobal": {
-                    "name": "Twitch Globals",
-                    "note": "Show Twitch global emotes"
-                },
-                "twitchsubscriber": {
-                    "name": "Twitch Subscribers",
-                    "note": "Show Twitch subscriber emotes"
-                },
-                "frankerfacez": {
-                    "name": "FrankerFaceZ",
-                    "note": "Show emotes from FFZ"
-                },
-                "bttv": {
-                    "name": "BetterTTV",
-                    "note": "Show emotes from BTTV"
-                }
-            }
         }
     },
     "Addons": {
         "title": "{{name}} v{{version}} by {{author}}",
         "byline": "by {{author}}",
         "openFolder": "Open {{type}} Folder",
+        "openStore": "Open {{type}} Store",
+        "storeMessage": "Browse and install official community {{type}}",
+        "store": "Store",
+        "viewInstalled": "View Installed {{type}}",
         "reload": "Reload",
         "addonSettings": "Settings",
         "website": "Website",
@@ -215,9 +203,23 @@
         "version": "Version",
         "added": "Date Added",
         "modified": "Date Modified",
+        "releaseDate": "Release Date",
+        "lastUpdated": "Last Update",
+        "isEnabled": "Enabled",
+        "popularity": "Popularity",
+        "isInstalled": "Installed",
+        "downloads": "Downloads",
+        "likes": "Likes",
+        "listView": "List View",
+        "gridView": "Grid View",
+        "enableAll": "Enable All",
+        "disableAll": "Disable All",
+        "enableAllWarning": "Enabling all {{type}} can cause temporary lag and unexpected errors.\n\n(Hold shift while clicking to skip this prompt!)",
         "search": "Search {{type}}",
+        "results": "{{count}} Results",
         "editAddon": "Edit",
         "deleteAddon": "Delete",
+        "downloadAddon": "Download",
         "confirmDelete": "Are you sure you want to delete {{name}}?",
         "confirmationText": "You have unsaved changes to {{name}}. Closing this window will lose all those changes.",
         "enabled": "{{name}} has been enabled.",
@@ -231,16 +233,28 @@
         "unknownAuthor": "Unknown Author",
         "noDescription": "Description not provided.",
         "alreadyExists": "There is already a {{type}} with name {{name}}",
-        "alreadWatching": "Already watching  addons.",
+        "alreadWatching": "Already watching addons.",
         "metaError": "META could not be parsed.",
         "missingNameData": "META missing name data.",
         "metaNotFound": "META was not found.",
         "compileError": "Could not be compiled. See console for details.",
         "wasUnloaded": "{{name}} was unloaded.",
         "blankSlateHeader": "You don't have any {{type}}s!",
-        "blankSlateMessage": "Grab some from [this website]({{link}}) and add them to your {{type}} folder.",
-        "isEnabled": "Enabled",
-        "wasLoaded": "{{name}} v{{version}} was loaded."
+        "blankSlateMessage": "Grab some from [our website]({{link}}) and add them to your {{type}} folder.",
+        "blankSlateHeaderGeneric": "You don't have anything!",
+        "blankSlateMessageGeneric": "You should probably get some.",
+        "wasLoaded": "{{name}} v{{version}} was loaded.",
+        "failedToDownload": "Failed to download {{type}} {{name}}",
+        "successfullyDownload": "Successfully downloaded {{name}}",
+        "alreadyInstalled": "{{name}} is already installed",
+        "failedToFetch": "Unable to get addons",
+        "new": "New",
+        "updated": "Updated",
+        "downloadCount": "{{downloads}} Downloads",
+        "likeCount": "{{likes}} Likes",
+        "tags": "Tags",
+        "preview": "Preview",
+        "official": "Official"
     },
     "CustomCSS": {
         "confirmationText": "You have unsaved changes to your Custom CSS. Closing this window will lose all those changes.",
@@ -250,35 +264,6 @@
         "openDetached": "Detach Window",
         "settings": "Editor Settings",
         "editorTitle": "Custom CSS Editor"
-    },
-    "Emotes": {
-        "loading": "Loading emotes in the background do not reload.",
-        "loaded": "All emotes successfully loaded.",
-        "clearEmotes": "Clear Emote Data",
-        "favoriteAction": "Favorite!",
-        "downloadFailed": "Download Failed",
-        "failureMessage": "BetterDiscord failed to download emotes, please check your internet connection and firewall."
-    },
-    "PublicServers": {
-        "button": "Public Servers",
-        "join": "Join",
-        "joining": "Joining",
-        "joined": "Joined",
-        "loading": "Loading",
-        "loadMore": "Load More",
-        "notConnected": "Not Connected",
-        "connectionRequired": "You must connect your account in order to join servers.",
-        "connectionError": "Connection Error",
-        "connectionErrorMessage": "There was an error connecting to DiscordServers.com, it's possible their website/api is down. Please try again later.",
-        "pagination": "Page {{page}} of {{count}}",
-        "search": "Search",
-        "connect": "Connect",
-        "reconnect": "Reconnect",
-        "categories": "Categories",
-        "keywords": "Keywords",
-        "connection": "Connected as: {{username}}#{{discriminator}}",
-        "results": "Showing {{start}}-{{end}} of {{total}} results in {{category}}",
-        "query": "for {{query}}"
     },
     "Modals": {
         "confirmAction": "Are You Sure?",
@@ -295,7 +280,10 @@
         "restartNow": "Restart Now",
         "restartLater": "Restart Later",
         "additionalInfo": "Additional Info",
-        "restartPrompt": "In order to take effect, Discord needs to be restarted. Do you want to restart now?"
+        "restartPrompt": "In order to take effect, Discord needs to be restarted. Do you want to restart now?",
+        "changelog": "Changelog",
+        "debuglog": "Your debug log file has exceeded 100MB, would you like to clear the log?",
+        "automaticallyEnable": "Automatically Enable"
     },
     "ReactDevTools": {
         "notFound": "Extension Not Found",
@@ -321,6 +309,7 @@
         "updateAvailable": "BetterDiscord has a new update (v{{version}})",
         "addonUpdatesAvailable": "BetterDiscord has found updates for {{count}} of your {{type}}s!",
         "addonUpdated": "{{name}} has been updated to version {{version}}!",
+        "addonUpdateFailed": "Failed to update {{name}}. Please try again later.",
         "checking": "Checking for updates!",
         "finishedChecking": "Finished checking for updates!",
         "checkForUpdates": "Check For Updates!",
@@ -329,5 +318,18 @@
         "versionAvailable": "Version {{version}} now available!",
         "upToDateBlankslate": "All of your {{type}} seem to be up to date!",
         "updateButton": "Update!"
+    },
+    "Settings": {
+        "customColor": "Custom Color",
+        "resetSettings": "Reset Settings",
+        "resetSettingsWarning": "Resetting your settings returns them all to the original state, this cannot be undone."
+    },
+    "Socials": {
+        "twitter": "Follow Us!",
+        "github": "Star Us!"
+    },
+    "Paginator": {
+        "back": "Back",
+        "next": "Next"
     }
 }

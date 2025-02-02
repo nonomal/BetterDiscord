@@ -17,6 +17,7 @@
 }
 
 .bd-controls,
+.bd-controls-basic,
 .bd-controls-advanced {
     display: flex;
 }
@@ -27,7 +28,7 @@
 
 .bd-addon-list.bd-grid-view {
     display: grid;
-    grid-template-columns: auto auto;
+    grid-template-columns: 1fr 1fr;
     column-gap: 10px;
     row-gap: 10px;
 }
@@ -88,6 +89,8 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    display: inline-flex;
+    gap: 4px;
 }
 
 .bd-name::after,
@@ -212,7 +215,7 @@
     flex-wrap: wrap;
 }
 
-.bd-addon-controls .bd-search {
+.bd-settings-title .bd-search {
     font-size: 13px;
     margin: 0;
     width: 200px;
@@ -236,7 +239,7 @@
 }
 
 .bd-addon-modal {
-    min-height: unset;
+    min-height: 0;
 }
 
 .bd-addon-modal-settings {
@@ -261,33 +264,41 @@
     margin-left: 10px;
 }
 
-.bd-addon-views .bd-view-button {
+.bd-addon-controls .bd-button {
     background-color: transparent;
     padding: 3px 4px;
 }
 
-.bd-addon-views .bd-view-button svg {
+.bd-addon-controls .bd-button svg {
     fill: var(--interactive-normal);
 }
 
-.bd-addon-views .bd-view-button.selected svg {
+.bd-addon-controls .bd-button.selected svg {
     fill: #FFFFFF;
 }
 
-.bd-addon-views .bd-view-button:hover {
+.bd-addon-controls .bd-button:hover {
     background-color: var(--background-modifier-selected);
 }
 
-.bd-addon-views .bd-view-button:active {
+.bd-addon-controls .bd-button:active {
     background-color: var(--background-modifier-accent);
 }
 
-.bd-addon-views .bd-view-button.selected {
+.bd-addon-controls .bd-button.selected {
     background-color: #3E82E5;
 }
 
-.bd-addon-views .bd-view-button + .bd-view-button {
+.bd-addon-controls .bd-button + .bd-button {
     margin-left: 5px;
+}
+
+.bd-controls-basic .bd-button:active svg {
+    fill: #FFFFFF;
+}
+
+.bd-controls-basic .bd-button:active {
+    background-color: #3E82E5;
 }
 
 .bd-addon-list .bd-footer .bd-links,
@@ -315,4 +326,41 @@
 
 .bd-addon-list .bd-footer .bd-links .bd-addon-button {
     height: 24px;
+}
+
+/* The store card */
+.bd-store-card {
+    padding: 12px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--background-secondary);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    margin: 10px 0;
+}
+.bd-store-card-icon {
+    border-radius: 50%;
+    flex-grow: 0;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    background: var(--background-tertiary);
+    color: var(--interactive-normal);
+    padding: 8px;
+}
+.bd-store-card-body {
+    flex-grow: 1;
+    flex-shrink: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-left: 12px;
+}
+.bd-store-card-caret {
+    color: var(--interactive-normal);
 }

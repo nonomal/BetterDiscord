@@ -2,6 +2,290 @@
 
 This changelog starts with the restructured 1.0.0 release that happened after context isolation changes. The changelogs here should more-or-less mirror the ones that get shown in the client but probably with less formatting and pizzazz.
 
+
+## 1.12.1
+
+### Added
+ - Sliders can now set more specific labels in their markers
+ - Addon update checking can now be toggled
+ - Update checking can now be done periodically
+
+### Removed
+- Removed extra code in the devtools warning module
+
+### Changed
+ - `forceUpdate` is only used for particular setting IDs
+ - `bySource` now accepted multiple searches
+ - Store and addon requests now set the no-cache directive
+
+### Fixed
+ - Fixed frame showing up on linux
+ - Fixed opening store from context menu
+ - Fixed addon store error causing freezes
+ - Fixed crashing when mentioning a bot
+ - Fixed addon updates not checking status code
+
+
+## 1.12.0
+
+### Added
+ - Added built-in addon store
+ - Slash command API
+ - Default BetterDiscord slash commands
+ - Search webpack modules by source code string (or regex) search (`getBySource`)
+ - Basic theme attributes
+ - React crash recovery
+ - API for mapping the mangled keys of a single module (`getMangled`)
+ - Webpack search APIs now have a `raw` option to return the entire `Module` object
+ - New native window frame option
+ - In-app traffic lights for macOS when using a native frame
+ - Added `onAdded` to the plugin api under `DOM`
+ - New `Open Addon Store` entry in context menu
+
+### Removed
+
+### Changed
+ - `DOM.createElement` can now accept multiple children and any number of directly assignable properties
+ - Settings builder now accepts a `button` type
+ - Addon error modal now uses `details` and `summary` to be more accessible
+ - Internal setting strings are now handled via `get` functions to allow for blind auto-translations
+ - `className` function changed to use `clsx` under the hood--our first true dependency
+ - Webpack searching does some additional sanity checking to help prevent errors on string searches
+   - String searches are becoming more and more common so this will help performance on those searches
+   - The downside is this has some very slight overhead for all other types of searching
+
+### Fixed
+ - Fixed remove minimum size
+ - Clicking component source in react devtoools now goes to the right component when patched
+ - Corrupt plugin configs won't halt operation
+ - Blankslate for no addons in the list now render properly
+ - Fixed grabbing context menu components
+ - Fixed grabbing modal actions
+
+### Deprecated
+ - `target` option of `DOM.createElement` is deprecated
+
+## 1.11.0
+
+### Added
+ - Added new `showChangelogModal` to the `UI` namespace
+ - Added `getNestedValue` and `semverCompare` to `Utils`
+ - Added settings builders to `UI` namespace as `buildSettingItem` and `buildSettingsPanel`
+ - Added a `Logger` namespace for easier and prettier logging of debug information
+ - Added some React components under `BdApi.Components
+
+### Removed
+
+### Changed
+
+### Fixed
+ - Fixed a `0` showing up when modals weren't on screen
+ - Fixed the version string not showing up in settings
+ - Fixed an issue where enabled/disabling custom css wouldn't update the style
+ - Fixed tooltips not being able to have custom labels
+ - Fixed lazy `Webpack` listeners not being given the correct arguments
+ - Fixed `Filters.combine` not using the correct arguments
+ - Fixed plugin settings modals overflowing the window
+
+## 1.10.2
+
+### Added
+
+### Removed
+
+### Changed
+
+### Fixed
+- Fixed transition group search for Discord's new export schema
+
+## 1.10.1
+
+### Added
+- Added an `ErrorBoundary` to the custom modal stack to prevent errors from bubbling up and preventing startup.
+
+### Removed
+
+### Changed
+
+### Fixed
+- Fixed modal transition component search for Discord's new function component version
+
+
+## 1.10.0
+
+### Added
+- Enable/disable all buttons for both AddonLists
+- BDContextMenu has been integrated
+- Ability to reset to default settings of any collection
+- Several design components like Flex, Button, Text, and all Modal components
+- Added a backup modal stack and backdrop in case we lose Discord's again
+- Added a wanring for large debug logs
+- `onClose` for modal APIs
+- New debug information in user settings
+
+### Removed
+- Several unused "known modules"
+- `DiscordClasses` module since it was seldom used
+- `ClassName` and similar constructs
+- Legacy emote assets
+
+### Changed
+- Search bars now auto focus
+- Opening folder on Windows now occur in the foreground
+- Search fields are now clearable
+- AddonList pages now show totals and results of searches
+- Custom CSS live update is now debounced and using a proper switch not a checkbox
+- ConfirmationModal and ChangelogModal are now using custom components
+- Updater panel now uses icons rather than text buttons
+- AddonList panels have been rearranged to accomodate the new buttons
+- The anonymous BD patch function is now named `BDPatcher`
+- Modal APIs now use internal ConfirmationModal component
+- Markdown areas now consistenly allow for embedded links
+- Lazy loaded modules are returned to the original source
+
+### Fixed
+- Fixed grabbing the wrong module for accepting invites
+- Fixed more strings that were not translatable
+
+## 1.9.8
+
+### Added
+
+### Removed
+
+### Changed
+
+### Fixed
+- Removed `ipc.sendTo` for electron 28
+- Fixed core updater not using the semver comparator
+
+## 1.9.7
+
+### Added
+- Support for Spanish (LATAM) locale
+
+### Removed
+
+### Changed
+- Updated translations
+- Ignore relative requires (This is because when favoriting a GIF and other UI actions, Discord repeatedly attempts to load relative requires on accident causing our code to make tons of FS requests causing lag.)
+
+### Fixed
+- Fixed locale not falling back to English properly
+
+## 1.9.6
+
+### Added
+- All HTTP request options for bd-fetch
+
+### Removed
+
+### Changed
+- Updated translations
+
+### Fixed
+- Fixed race conditions for notices
+- Fixed options not being sent to fetch
+
+## 1.9.5
+
+### Added
+
+### Removed
+
+### Changed
+
+### Fixed
+- Fixed the webpack patch for the new loader
+
+## 1.9.4
+
+### Added
+- New css variable `--os-accent-color`
+- Temporary `Buffer` polyfill
+
+### Removed
+
+### Changed
+- `BdApi.Net.fetch` now has an optional `timeout` parameter
+
+### Fixed
+- Fixes not being able to use `http` for `BdApi.Net.fetch`.
+- Bad URLs and other early errors in `BdApi.Net.fetch` now handled better.
+
+## 1.9.3
+
+### Added
+- Multiple shorthand functions under `BdApi.Webpack`
+- New `getStore` filter
+
+### Removed
+
+### Changed
+- Updated translations
+
+### Fixed
+- Fixed header color in light mode.
+- Fixed window size retention for users of remove minimum size option.
+- Fixed a toast saying an addon was loaded when it was unloaded.
+- Fixed context menu patching API for plugins.
+
+## 1.9.2
+
+### Added
+
+### Removed
+
+### Changed
+
+### Fixed
+- Fixed context menu crash & api
+
+## 1.9.1
+
+### Added
+- SourceURL for the renderer
+
+### Removed
+
+### Changed
+
+### Fixed
+- Fixed client crashes
+
+## 1.9.0
+
+### Added
+- Remove minimum window size now remembers desired size
+- Basic semver comparison
+
+### Removed
+- Public Servers
+- Old DataStore functions that are no longer used
+
+### Changed
+- All main react components are now functional with hooks
+- Mac now uses cmd instead of ctrl
+
+### Fixed
+- Fixed dropdowns
+- Fixed markdown parser
+
+## 1.8.5
+
+### Added
+- Ability to use a custom local version of React DevTools
+- Experimental `BdApi.Components` for component access in plugins
+
+### Removed
+
+### Changed
+- Title for settings sidebar now uses a custom component
+
+### Fixed
+- Fixed ModalRoot and ConfirmationModal not being found in webpack
+- Fixed context menus for internal changes
+
 ## 1.8.4
 
 ### Added

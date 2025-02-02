@@ -1,14 +1,24 @@
-import Builtin from "../structs/builtin";
-import {Settings, DataStore, React, WebpackModules, Events, DOMManager, Strings, DiscordModules} from "modules";
-import CSSEditor from "../ui/customcss/csseditor";
-import FloatingWindows from "../ui/floatingwindows";
-import SettingsTitle from "../ui/settings/title";
-import Utilities from "../modules/utilities";
+import fs from "fs";
+import electron from "electron";
 
-const fs = require("fs");
-const electron = require("electron");
+import Builtin from "@structs/builtin";
+
+import Settings from "@modules/settingsmanager";
+import DataStore from "@modules/datastore";
+import React from "@modules/react";
+import WebpackModules from "@modules/webpackmodules";
+import Events from "@modules/emitter";
+import DOMManager from "@modules/dommanager";
+import Strings from "@modules/strings";
+import DiscordModules from "@modules/discordmodules";
+import Utilities from "@modules/utilities";
+
+import CSSEditor from "@ui/customcss/csseditor";
+import FloatingWindows from "@ui/floatingwindows";
+import SettingsTitle from "@ui/settings/title";
+
+
 const UserSettings = WebpackModules.getByProps("updateAccount");
-const Dispatcher = DiscordModules.Dispatcher;
 
 export default new class CustomCSS extends Builtin {
     get name() {return "Custom CSS";}
@@ -110,6 +120,13 @@ export default new class CustomCSS extends Builtin {
         DataStore.saveCustomCSS(this.savedCss);
     }
 
+    open() {
+        if (this.isDetached) return;
+        if (this.nativeOpen) return this.openNative();
+        else if (this.startDetached) return this.openDetached(this.savedCss);
+        return UserSettings?.open?.(this.id);
+    }
+
     openNative() {
         electron.shell.openExternal(`file://${DataStore.customCSS}`);
     }
@@ -123,7 +140,7 @@ export default new class CustomCSS extends Builtin {
             save: this.saveCSS.bind(this),
             update: this.insertCSS.bind(this),
             openNative: this.openNative.bind(this),
-            onChange: this.onChange.bind(this)
+            onChange: Utilities.debounce(this.onChange.bind(this), 500)
         });
 
         FloatingWindows.open({
@@ -150,6 +167,6 @@ export default new class CustomCSS extends Builtin {
         });
         this.isDetached = true;
         UserSettings.close();
-        Dispatcher.dispatch({type: "LAYER_POP"});
+        DiscordModules.Dispatcher?.dispatch({type: "LAYER_POP"});
     }
 };

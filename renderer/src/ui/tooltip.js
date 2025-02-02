@@ -1,5 +1,5 @@
-import Logger from "common/logger";
-import {DOMManager} from "modules";
+import Logger from "@common/logger";
+import DOMManager from "@modules/dommanager";
 
 
 const toPx = function(value) {
@@ -81,7 +81,7 @@ export default class Tooltip {
         /** Don't reshow if already active */
         if (this.active) return;
         this.active = true;
-        this.labelElement.textContent = this.label;
+        // this.labelElement.textContent = this.label;
         this.container.append(this.element);
  
         if (this.side == "top") {

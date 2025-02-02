@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import electron from "electron";
+import {spawn} from "child_process";
 
 import ReactDevTools from "./reactdevtools";
 import * as IPCEvents from "common/constants/ipcevents";
@@ -60,6 +61,7 @@ export default class BetterDiscord {
                     return false;
                 }
             })();
+            //# sourceURL=betterdiscord/renderer.js
         `);
 
         if (!success) return; // TODO: cut a fatal log
@@ -96,7 +98,8 @@ export default class BetterDiscord {
                     electron.app.exit();
                 }
                 if (result.response === 1) {
-                    electron.shell.openPath(path.join(dataPath, "plugins"));
+                    if (process.platform === "win32") spawn("explorer.exe", [path.join(dataPath, "plugins")]);
+                    else electron.shell.openPath(path.join(dataPath, "plugins"));
                 }
             });
             hasCrashed = false;
@@ -110,6 +113,34 @@ export default class BetterDiscord {
         browserWindow.webContents.on("render-process-gone", () => {
             hasCrashed = true;
         });
+
+        // Seems to be windows exclusive. MacOS requires a build plist change
+        if (electron.app.setAsDefaultProtocolClient("betterdiscord")) {
+            // If application was opened via protocol, set process.env.BETTERDISCORD_PROTOCOL
+            const protocol = process.argv.find((arg) => arg.startsWith("betterdiscord://"));
+            if (protocol) {
+                process.env.BETTERDISCORD_PROTOCOL = protocol;
+            }
+
+            // I think this is how it works on MacOS
+            // But cant work still because of a build plist needs changed (I think?)
+            electron.app.on("open-url", (event, url) => {
+                if (url.startsWith("betterdiscord://")) {
+                    browserWindow.webContents.send(IPCEvents.HANDLE_PROTOCOL, url);
+                }
+            });
+
+            electron.app.on("second-instance", (event, argv) => {
+                // Ignore multi instance
+                if (argv.includes("--multi-instance")) return;
+
+                const url = argv.find((arg) => arg.startsWith("betterdiscord://"));
+
+                if (url) {
+                    browserWindow.webContents.send(IPCEvents.HANDLE_PROTOCOL, url);
+                }
+            });
+        }
     }
 
     static disableMediaKeys() {
@@ -121,6 +152,25 @@ export default class BetterDiscord {
 
 if (BetterDiscord.getSetting("developer", "reactDevTools")) {
     electron.app.whenReady().then(async ()=>{
-        await ReactDevTools.install();
+        await ReactDevTools.install(dataPath);
     });
 }
+
+// eslint-disable-next-line accessor-pairs
+Object.defineProperty(global, "appSettings", {
+    set(setting) {
+        setting.set("DANGEROUS_ENABLE_DEVTOOLS_ONLY_ENABLE_IF_YOU_KNOW_WHAT_YOURE_DOING", true);
+        if (BetterDiscord.getSetting("window", "removeMinimumSize")) {
+            setting.set("MIN_WIDTH", 0);
+            setting.set("MIN_HEIGHT", 0);
+        }
+        else {
+            setting.set("MIN_WIDTH", 940);
+            setting.set("MIN_HEIGHT", 500);
+        }
+        delete global.appSettings;
+        global.appSettings = setting;
+    },
+    configurable: true,
+    enumerable: false
+});

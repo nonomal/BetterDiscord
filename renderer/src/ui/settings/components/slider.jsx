@@ -1,21 +1,68 @@
-import {React} from "modules";
+import React from "@modules/react";
 
-export default class Slider extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {value: this.props.value};
-        this.onChange = this.onChange.bind(this);
-    }
+const {useState, useCallback, useMemo, useRef} = React;
 
-    onChange(e) {
-        this.setState({value: e.target.value});
-        // e.target.style.backgroundSize = (e.target.value - this.props.min) * 100 / (this.props.max - this.props.min) + "% 100%";
-        if (this.props.onChange) this.props.onChange(e.target.value);
-    }
 
-    render() {
-        return <div className="bd-slider-wrap">
-            <div className="bd-slider-label">{this.state.value}</div><input onChange={this.onChange} type="range" className="bd-slider-input" min={this.props.min} max={this.props.max} step={this.props.step} value={this.state.value} style={{backgroundSize: (this.state.value - this.props.min) * 100 / (this.props.max - this.props.min) + "% 100%"}} />
-        </div>;
-    }
+export default function Slider({value: initialValue, min, max, step, onChange, disabled, units = "", markers = []}) {
+    const [value, setValue] = useState(initialValue);
+    const inputRef = useRef(null);
+
+    const change = useCallback((e) => {
+        if (disabled) return;
+        onChange?.(e.target.value);
+        setValue(e.target.value);
+    }, [onChange, disabled]);
+
+    const jumpToValue = useCallback(val => {
+        if (disabled) return;
+        onChange?.(val);
+        setValue(val);
+    }, [onChange, disabled]);
+
+    const percent = useCallback(val => {
+        return (val - min) * 100 / (max - min);
+    }, [min, max]);
+
+    const labelOffset = useMemo(() => {
+        const slope = (-62.5 - -25) / (max - min);
+        const offset = (value * slope) + -25;
+        if (offset < -62.5) return -62.5;
+        return offset;
+    }, [value, min, max]);
+
+    const trackClick = useCallback(e => {
+        const bounds = e.target.getBoundingClientRect();
+        const offsetX = e.clientX - bounds.left;
+        const offsetPercent = (offsetX / bounds.width);
+        const newValue = (offsetPercent * (max - min)) + min;
+        inputRef.current.value = newValue;
+        jumpToValue(inputRef.current?.value);
+
+    }, [max, min, jumpToValue, inputRef]);
+
+    return <div className={`bd-slider-wrap ${disabled ? "bd-slider-disabled" : ""} ${markers.length > 0 ? "bd-slider-markers" : ""}`}>
+        <input onChange={change} type="range" className="bd-slider-input" min={min} max={max} step={step} value={value} disabled={disabled} ref={inputRef} />
+        <div className="bd-slider-label" style={{left: `${percent(value)}%`, transform: `translateX(${labelOffset}%)`}}>{value}{units}</div>
+        <div className="bd-slider-track" style={{backgroundSize: percent(value) + "% 100%"}} onClick={trackClick}></div>
+        {markers?.length > 0 && <div className="bd-slider-marker-container">
+            {markers.map(m => {
+                const markerValue = m?.value ?? m;
+                const markerLabel = m?.label ?? m;
+                const showUnits = units && !m?.label;
+                return <div className="bd-slider-marker" style={{left: percent(markerValue) + "%"}} onClick={() => jumpToValue(markerValue)}>
+                    {markerLabel}{showUnits && units}
+                </div>;
+            })}
+        </div>}
+    </div>;
 }
+
+
+
+/**
+ * label offset left:
+ * 
+ * value - min
+ * -----------   x 100
+ *  max - min
+ */

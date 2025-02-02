@@ -1,19 +1,30 @@
-import LocaleManager from "./localemanager";
+import Logger from "@common/logger";
 
-import Logger from "common/logger";
-import {Config, Changelog} from "data";
+import Config from "@data/config";
+import Changelog from "@data/changelog";
+
+import * as Builtins from "@builtins/builtins";
+
+import LoadingIcon from "../loadingicon";
+
+import LocaleManager from "./localemanager";
 import DOMManager from "./dommanager";
 import PluginManager from "./pluginmanager";
 import ThemeManager from "./thememanager";
 import Settings from "./settingsmanager";
-import * as Builtins from "builtins";
-import Modals from "../ui/modals";
 import DataStore from "./datastore";
 import DiscordModules from "./discordmodules";
-import LoadingIcon from "../loadingicon";
-import Styles from "../styles/index.css";
+
+import IPC from "./ipc";
 import Editor from "./editor";
 import Updater from "./updater";
+import AddonStore from "./addonstore";
+
+
+import Styles from "@styles/index.css";
+import Modals from "@ui/modals";
+import FloatingWindows from "@ui/floatingwindows";
+import CommandManager from "./commandmanager";
 
 export default new class Core {
     async startup() {
@@ -24,12 +35,17 @@ export default new class Core {
         Config.userData = process.env.DISCORD_USER_DATA;
         Config.dataPath = process.env.BETTERDISCORD_DATA_PATH;
 
+        IPC.getSystemAccentColor().then(value => DOMManager.injectStyle("bd-os-values", `:root {--os-accent-color: #${value};}`));
+
         // Load css early
         Logger.log("Startup", "Injecting BD Styles");
         DOMManager.injectStyle("bd-stylesheet", Styles.toString());
 
         Logger.log("Startup", "Initializing DataStore");
         DataStore.initialize();
+
+        Logger.log("Startup", "Initializing AddonStore");
+        AddonStore.initialize();
 
         Logger.log("Startup", "Initializing LocaleManager");
         LocaleManager.initialize();
@@ -40,6 +56,9 @@ export default new class Core {
         Logger.log("Startup", "Initializing DOMManager");
         DOMManager.initialize();
 
+        Logger.log("Startup", "Initializing CommandManager");
+        CommandManager.initialize();
+
         Logger.log("Startup", "Waiting for connection...");
         await this.waitForConnection();
 
@@ -47,6 +66,7 @@ export default new class Core {
         await Editor.initialize();
 
         Modals.initialize();
+        FloatingWindows.initialize();
 
         Logger.log("Startup", "Initializing Builtins");
         for (const module in Builtins) {

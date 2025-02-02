@@ -1,6 +1,10 @@
-import Builtin from "../../structs/builtin";
-import Modals from "../../ui/modals";
-import {Strings, IPC} from "modules";
+import Builtin from "@structs/builtin";
+
+import Strings from "@modules/strings";
+import IPC from "@modules/ipc";
+
+import Modals from "@ui/modals";
+
 
 export default new class ReactDevTools extends Builtin {
     get name() {return "ReactDevTools";}
@@ -13,6 +17,22 @@ export default new class ReactDevTools extends Builtin {
 
     async disabled() {
         this.showModal();
+    }
+
+
+    initialize() {
+        super.initialize();
+
+        let originalType = window.$type?.__originalFunction || window.$type;
+        
+        Object.defineProperty(window, "$type", {
+            get: () => {
+                return originalType;
+            },
+            set: (v) => {
+                originalType = v?.__originalFunction || v;
+            },
+        });
     }
 
     showModal() {

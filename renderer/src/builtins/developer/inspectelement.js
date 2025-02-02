@@ -1,5 +1,6 @@
-import Builtin from "../../structs/builtin";
-import IPC from "../../modules/ipc";
+import Builtin from "@structs/builtin";
+
+import IPC from "@modules/ipc";
 
 export default new class InspectElement extends Builtin {
     get name() {return "InspectElementHotkey";}
@@ -15,7 +16,8 @@ export default new class InspectElement extends Builtin {
     }
 
     inspectElement(e) {
-        if (e.ctrlKey && e.shiftKey && e.key === "C") { // Ctrl + Shift + C
+        const metaKey = process.platform === "darwin" ? e.metaKey : e.ctrlKey;
+        if (metaKey && e.shiftKey && e.key === "C") { // Ctrl/Cmd + Shift + C
             IPC.inspectElement();
         }
     }

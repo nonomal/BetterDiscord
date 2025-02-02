@@ -9,14 +9,6 @@
             "name": "Налаштування",
             "general": {
                 "name": "Основні",
-                "emotes": {
-                    "name": "Система емодзі",
-                    "note": "Активація системи емодзі BetterDiscord"
-                },
-                "publicServers": {
-                    "name": "Публічні сервери",
-                    "note": "Відображення кнопки переліку публічних серверів"
-                },
                 "voiceDisconnect": {
                     "name": "Голосовий чат під час закриття",
                     "note": "Відключатися від голосового сервера під час закриття Discord"
@@ -111,55 +103,6 @@
                     "note": "Виводить все з консолі у файл debug.log в теці BetterDiscord"
                 }
             }
-        },
-        "emotes": {
-            "name": "Емодзі",
-            "general": {
-                "name": "General",
-                "download": {
-                    "name": "Оновлювати емодзі",
-                    "note": "Оновлювати емодзі при старінні"
-                },
-                "emoteMenu": {
-                    "name": "Перелік емодзі",
-                    "note": "Показувати перелік Twitch/Обраних емодзі"
-                },
-                "hideEmojiMenu": {
-                    "name": "Приховувати перелік емодзі",
-                    "note": "Приховує меню емодзі Discord під час використання переліку емодзі"
-                },
-                "autoCaps": {
-                    "name": "Великі літери емодзі",
-                    "note": "Автоматично переводити текст команд емодзі у великі літери"
-                },
-                "modifiers": {
-                    "name": "Показувати модифікатори емодзі",
-                    "note": "Увімкнути модифікації емодзі (flip, spin, pulse, spin2, spin3, 1spin, 2spin, 3spin, tr, bl, br, shake, shake2, shake3, flap)"
-                },
-                "animateOnHover": {
-                    "name": "Анімувати при наведенні",
-                    "note": "Анімувати модифікатори емодзі лише при наведенні"
-                }
-            },
-            "categories": {
-                "name": "Категорії",
-                "twitchglobal": {
-                    "name": "Twitch (основні)",
-                    "note": "Показувати основні емодзі Twitch"
-                },
-                "twitchsubscriber": {
-                    "name": "Twitch (підписників)",
-                    "note": "Показувати емодзі підписників Twitch"
-                },
-                "frankerfacez": {
-                    "name": "FrankerFaceZ",
-                    "note": "Показувати емодзі FFZ"
-                },
-                "bttv": {
-                    "name": "BetterTTV",
-                    "note": "Показувати емодзі BTTV"
-                }
-            }
         }
     },
     "Addons": {
@@ -212,40 +155,11 @@
         "settings": "Налаштування редактора",
         "editorTitle": "Самописний редактор стилів"
     },
-    "Emotes": {
-        "loading": "Завантаження емодзі у фоновому режимі без перезавантаження",
-        "loaded": "Усі емодзі успішно завантажені.",
-        "clearEmotes": "Очистити дані емодзі",
-        "favoriteAction": "Обране!",
-        "downloadFailed": "Завантаження не вдалося",
-        "failureMessage": "BetterDiscord не вдалося завантажити емодзі. Будь ласка, перевір підключення до Інтернету та брандмауер."
-    },
-    "PublicServers": {
-        "button": "Публічні сервери",
-        "join": "Приєднатися",
-        "joining": "Приєднання",
-        "joined": "Приєднався",
-        "loading": "Завантаження",
-        "loadMore": "Показати більше",
-        "notConnected": "Немає зв'язку",
-        "connectionRequired": "Ти повинен під'єднати свій обліковий запис, щоб приєднатися до серверів.",
-        "connectionError": "Помилка підключення",
-        "connectionErrorMessage": "Виникла помилка при підключенні до DiscordServers.com. Можливо, їхній сайт/api не працює. Будь ласка, спробуй ще раз пізніше.",
-        "pagination": "{{page}} сторінка із {{count}}",
-        "search": "Пошук",
-        "connect": "Приєднатися",
-        "reconnect": "Приєднатися знову",
-        "categories": "Категорії",
-        "keywords": "Ключові слова",
-        "connection": "Підключений як: {{username}}#{{discriminator}}",
-        "results": "Відображення {{start}}-{{end}} із {{total}} результатів у {{category}}",
-        "query": "для {{query}}"
-    },
     "Modals": {
         "confirmAction": "Ти впевнений?",
         "okay": "Так",
         "done": "Готово",
-        "cancel": "Скасуват��",
+        "cancel": "Скасувати",
         "nevermind": "Не звертати уваги",
         "close": "Закрити",
         "name": "Ім'я",

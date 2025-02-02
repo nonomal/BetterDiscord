@@ -1,18 +1,15 @@
-import {React} from "modules";
+import React from "@modules/react";
 
-export default class Textbox extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {value: this.props.value};
-        this.onChange = this.onChange.bind(this);
-    }
+const {useState, useCallback} = React;
 
-    onChange(e) {
-        this.setState({value: e.target.value});
-        if (this.props.onChange) this.props.onChange(e.target.value);
-    }
 
-    render() {
-        return <input onChange={this.onChange} onKeyDown={this.props.onKeyDown} type="text" className="bd-text-input" placeholder={this.props.placeholder} maxLength={this.props.maxLength} value={this.state.value} />;
-    }
+export default function Textbox({value: initialValue, maxLength, placeholder, onKeyDown, onChange, disabled}) {
+    const [value, setValue] = useState(initialValue);
+    const change = useCallback((e) => {
+        if (disabled) return;
+        onChange?.(e.target.value);
+        setValue(e.target.value);
+    }, [onChange, disabled]);
+
+    return <input onChange={change} onKeyDown={onKeyDown} type="text" className="bd-text-input" placeholder={placeholder} maxLength={maxLength} value={value} disabled={disabled} />;
 }

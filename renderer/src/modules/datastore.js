@@ -1,9 +1,12 @@
-import {Config} from "data";
-import Logger from "common/logger";
-const fs = require("fs");
-const path = require("path");
+import fs from "fs";
+import path from "path";
+
+import Logger from "@common/logger";
+
+import Config from "@data/config";
+
+
 const releaseChannel = window?.DiscordNative?.app?.getReleaseChannel?.() ?? "stable";
-const discordVersion = window?.DiscordNative?.remoteApp?.getVersion?.() ?? "0.0.309";
 
 // Schema
 // =======================
@@ -40,58 +43,15 @@ export default new class DataStore {
         const dataFiles = fs.readdirSync(this.dataFolder).filter(f => !fs.statSync(path.resolve(this.dataFolder, f)).isDirectory() && f.endsWith(".json"));
         for (const file of dataFiles) {
             let data = {};
-            try {data = __non_webpack_require__(path.resolve(this.dataFolder, file));}
-            catch (e) {Logger.stacktrace("DataStore", `Could not load file ${file}`, e);}
+            try {
+                const content = fs.readFileSync(path.resolve(this.dataFolder, file)).toString();
+                data = JSON.parse(content);
+            }
+            catch (e) {
+                Logger.stacktrace("DataStore", `Could not load file ${file}`, e);
+            }
             this.data[file.split(".")[0]] = data;
         }
-
-        if (newStorageExists) return;
-
-        try {this.convertOldData();} // Convert old data if it exists (routine checks existence and removes existence)
-        catch (e) {Logger.stacktrace("DataStore", `Could not convert old data.`, e);}
-    }
-
-    convertOldData() {
-        const oldFile = path.join(Config.dataPath, "bdstorage.json");
-        if (!fs.existsSync(oldFile)) return;
-
-        const oldData = __non_webpack_require__(oldFile); // got the data
-        fs.renameSync(oldFile, `${oldFile}.bak`); // rename file after grabbing data to prevent loop
-        const setChannelData = (channel, key, value, ext = "json") => fs.writeFileSync(path.resolve(this.baseFolder, channel, `${key}.${ext}`), JSON.stringify(value, null, 4));
-        const channels = ["stable", "canary", "ptb"];
-        let customcss = "";
-        try {customcss = oldData.bdcustomcss ? atob(oldData.bdcustomcss) : "";}
-        catch (e) {Logger.stacktrace("DataStore:convertOldData", "Error decoding custom css", e);}
-        for (const channel of channels) {
-            if (!fs.existsSync(path.resolve(this.baseFolder, channel))) fs.mkdirSync(path.resolve(this.baseFolder, channel));
-            const channelData = oldData.settings[channel];
-            if (!channelData || !channelData.settings) continue;
-            const oldSettings = channelData.settings;
-            const newSettings = {
-                general: {publicServers: oldSettings["bda-gs-1"], voiceDisconnect: oldSettings["bda-dc-0"], showToasts: oldSettings["fork-ps-2"]},
-                appearance: {twentyFourHour: oldSettings["bda-gs-6"], minimalMode: oldSettings["bda-gs-2"], coloredText: oldSettings["bda-gs-7"]},
-                addons: {addonErrors: oldSettings["fork-ps-1"], autoReload: oldSettings["fork-ps-5"]},
-                developer: {debuggerHotkey: oldSettings["bda-gs-8"], reactDevTools: oldSettings.reactDevTools}
-            };
-
-            setChannelData(channel, "settings", newSettings); // settingsCookie
-            setChannelData(channel, "plugins", channelData.plugins || {}); // pluginCookie
-            setChannelData(channel, "themes", channelData.themes || {}); // themeCookie
-            fs.writeFileSync(path.resolve(this.baseFolder, channel, "custom.css"), customcss); // customcss
-        }
-
-        this.initialize(); // Reinitialize data store with the converted data
-    }
-
-    get injectionPath() {
-        if (this._injectionPath) return this._injectionPath;
-        const base = Config.appPath;
-        const roamingBase = Config.userData;
-        const roamingLocation = path.resolve(roamingBase, discordVersion, "modules", "discord_desktop_core", "injector");
-        const location = path.resolve(base, "..", "app");
-        const realLocation = fs.existsSync(location) ? location : fs.existsSync(roamingLocation) ? roamingLocation : null;
-        if (!realLocation) return this._injectionPath = null;
-        return this._injectionPath = realLocation;
     }
 
     get pluginFolder() {return this._pluginFolder || (this._pluginFolder = path.resolve(Config.dataPath, "plugins"));}
@@ -151,7 +111,9 @@ export default new class DataStore {
         if (!fs.existsSync(this.getPluginFile(pluginName))) return this.pluginData[pluginName] = {};
 
         // Getting here means not cached, read from disk
-        this.pluginData[pluginName] = JSON.parse(fs.readFileSync(this.getPluginFile(pluginName)));
+        try {this.pluginData[pluginName] = JSON.parse(fs.readFileSync(this.getPluginFile(pluginName)));}
+        // Setup blank data if parse fails
+        catch {return this.pluginData[pluginName] = {};}
     }
 
     getPluginData(pluginName, key) {

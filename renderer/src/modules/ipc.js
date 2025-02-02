@@ -1,8 +1,9 @@
 import {ipcRenderer as ipc} from "electron";
 
+import * as IPCEvents from "@common/constants/ipcevents";
+
 import Events from "./emitter";
 
-import * as IPCEvents from "common/constants/ipcevents";
 
 export default new class IPCRenderer {
 
@@ -24,8 +25,8 @@ export default new class IPCRenderer {
         return ipc.send(IPCEvents.TOGGLE_DEVTOOLS);
     }
 
-    relaunch() {
-        return ipc.send(IPCEvents.RELAUNCH);
+    relaunch(args) {
+        return ipc.send(IPCEvents.RELAUNCH, args);
     }
 
     runScript(script) {
@@ -44,11 +45,23 @@ export default new class IPCRenderer {
         return ipc.send(IPCEvents.MINIMUM_SIZE, width, height);
     }
 
+    setWindowSize(width, height) {
+        return ipc.send(IPCEvents.WINDOW_SIZE, width, height);
+    }
+
     stopDevtoolsWarning() {
         return ipc.send(IPCEvents.DEVTOOLS_WARNING);
     }
 
     openDialog(options) {
         return ipc.invoke(IPCEvents.OPEN_DIALOG, options);
+    }
+
+    getSystemAccentColor() {
+        return ipc.invoke(IPCEvents.GET_ACCENT_COLOR);
+    }
+
+    openPath(path) {
+        return ipc.send(IPCEvents.OPEN_PATH, path);
     }
 };

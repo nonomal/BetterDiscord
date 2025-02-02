@@ -2,21 +2,14 @@
     "Panels": {
         "plugins": "Pluginy",
         "themes": "Témata",
-        "customcss": "Vlastní CSS"
+        "customcss": "Vlastní CSS",
+        "updates": "Aktualizace"
     },
     "Collections": {
         "settings": {
             "name": "Nastavení",
             "general": {
                 "name": "Obecné",
-                "emotes": {
-                    "name": "Systém emotů",
-                    "note": "Povolí systém emotů BD"
-                },
-                "publicServers": {
-                    "name": "Veřejné servery",
-                    "note": "Zobrazí tlačítko veřejných serverů"
-                },
                 "voiceDisconnect": {
                     "name": "Odpojení z hlas. kanálu",
                     "note": "Odpojit z hlasového kanálu při zavření Discordu"
@@ -109,55 +102,42 @@
                 "debugLogs": {
                     "name": "Ladicí protokoly",
                     "note": "Vypíše vše z konzole do souboru debug.log ve složce BetterDiscordu"
-                }
-            }
-        },
-        "emotes": {
-            "name": "Emoty",
-            "general": {
-                "name": "Obecné",
-                "download": {
-                    "name": "Stáhnout emoty",
-                    "note": "Stáhne emoty vždy, kdy jsou zastaralé"
                 },
-                "emoteMenu": {
-                    "name": "Menu emotů",
-                    "note": "Zobrazit Twitch/oblíbené emoty v menu emotů"
-                },
-                "hideEmojiMenu": {
-                    "name": "Skrýt menu smajlíků",
-                    "note": "Skryje menu smajlíků Discordu při používání menu emotů"
-                },
-                "autoCaps": {
-                    "name": "Automatická kapitalizace emotů",
-                    "note": "Automatická kapitalizace emote příkazů"
-                },
-                "modifiers": {
-                    "name": "Zobrazit modifikátory emotů",
-                    "note": "Povolit modifikátory emotů (flip, spin, pulse, spin2, spin3, 1spin, 2spin, 3spin, tr, bl, br, shake, shake2, shake3, flap)"
-                },
-                "animateOnHover": {
-                    "name": "Animovat při přejetí",
-                    "note": "Animovat modifikátory emotů pouze při přejetí myší"
+                "devTools": {
+                    "name": "DevTools",
+                    "note": "Povolí přepnutí DevTools při stisku Ctrl+Shift+I"
                 }
             },
-            "categories": {
-                "name": "Kategorie",
-                "twitchglobal": {
-                    "name": "Globální Twitch",
-                    "note": "Zobrazí globální Twitch emoty"
+            "editor": {
+                "name": "Předvolby editoru",
+                "lineNumbers": {
+                    "name": "Čísla řádků",
+                    "note": "Povolí zobrazování čísel řádků vedle editoru"
                 },
-                "twitchsubscriber": {
-                    "name": "Odběratelé Twitch",
-                    "note": "Zobrazí odběratelské Twitch emoty"
+                "fontSize": {
+                    "name": "Velikost písma",
+                    "note": "Velikost písma (pt) k použití v editoru"
                 },
-                "frankerfacez": {
-                    "name": "FrankerFaceZ",
-                    "note": "Zobrazí emoty od FFZ"
+                "minimap": {
+                    "name": "Minimapa",
+                    "note": "Povolí zobrazování kódu v minimapě vedle editoru"
                 },
-                "bttv": {
-                    "name": "BetterTTV",
-                    "note": "Zobrazí emoty od BTTV"
+                "hover": {
+                    "name": "Referenční tooltipy",
+                    "note": "Povolí zobrazování referenčních tooltipů při přechodu přes pravidla a selektory"
+                },
+                "quickSuggestions": {
+                    "name": "Rychlé návrhy",
+                    "note": "Povolí zobrazování automaticky dokončovaných návrhů, zatímco píšete"
+                },
+                "renderWhitespace": {
+                    "name": "Zobrazit neviditelnou mezeru",
+                    "note": "Zda v editoru zobrazit neviditelnou mezeru",
+                    "options": {
+                        "all": "Vždy",
+                        "none": "Nikdy",
+                        "selection": "Výběr"
+                    }
                 }
             }
         }
@@ -200,8 +180,10 @@
         "metaNotFound": "META nebyl nalezen.",
         "compileError": "Nepodařilo se zkompilovat.",
         "wasUnloaded": "Doplněk {{name}} byl odnačten.",
-        "blankSlateHeader": "Nemáš žádné/žádný {{type}}!",
-        "blankSlateMessage": "Najdi si nějaké na [tomto webu]({{link}}) a přidej je do své {{type}} složky."
+        "blankSlateHeader": "Nemáš žádné doplňky typu {{type}}!",
+        "blankSlateMessage": "Najdi si nějaké na [tomto webu]({{link}}) a přidej je do své {{type}} složky.",
+        "isEnabled": "Povoleno",
+        "wasLoaded": "Doplněk {{name}} v{{version}} byl načten."
     },
     "CustomCSS": {
         "confirmationText": "Máš neuložené změny ve vlastním CSS. Zavřením tohoto okna je všechny ztratíš.",
@@ -211,35 +193,6 @@
         "openDetached": "Oddělit okno",
         "settings": "Nastavení editoru",
         "editorTitle": "Okno vlastního CSS"
-    },
-    "Emotes": {
-        "loading": "Načítání emotů na pozadí - neobnovuj.",
-        "loaded": "Všechny emoty byly úspěšně načteny.",
-        "clearEmotes": "Vyčistit data emotů",
-        "favoriteAction": "Oblíbené!",
-        "downloadFailed": "Stahování selhalo",
-        "failureMessage": "BetterDiscordu se nepodařilo stáhnout emoty, zkontroluj prosím své internetové připojení a firewall."
-    },
-    "PublicServers": {
-        "button": "veřejné",
-        "join": "Připojit se",
-        "joining": "Připojuji se",
-        "joined": "Připojen",
-        "loading": "Načítání",
-        "loadMore": "Načíst více",
-        "notConnected": "Nepřipojen",
-        "connectionRequired": "Aby ses mohl/a připojovat na servery, musíš připojit svůj účet.",
-        "connectionError": "Chyba spojení",
-        "connectionErrorMessage": "Při připojování k DiscordServers.com se vyskytla chyba, je možné, že jejich web/API je offline. Zkus to prosím znovu později.",
-        "pagination": "Strana {{page}} z {{count}}",
-        "search": "Hledat",
-        "connect": "Připojit",
-        "reconnect": "Znovu připojit",
-        "categories": "Kategorie",
-        "keywords": "Klíčová slova",
-        "connection": "Připojen/a jako: {{username}}#{{discriminator}}",
-        "results": "Zobrazování {{start}}-{{end}} z {{total}} výsledků v kategorii {{category}}",
-        "query": "pro dotaz {{query}}"
     },
     "Modals": {
         "confirmAction": "Opravdu?",
@@ -271,5 +224,24 @@
     "WindowPrefs": {
         "enabledInfo": "Tato možnost vyžaduje průhledné téma, aby fungovala správně. Na Windows to může rozbít Areo přichytávání a maximalizování.\n\nAby se tato změna projevila, bude potřeba restartovat Discord. Chceš jej restartovat nyní?",
         "disabledInfo": "Aby se tato změna projevila, bude potřeba restartovat Discord. Chceš jej restartovat nyní?"
+    },
+    "Notices": {
+        "moreInfo": "Více informací"
+    },
+    "Updater": {
+        "updateFailed": "Aktualizace selhala!",
+        "updateFailedMessage": "Aktualizace BettterDiscordu se nezdařila. Stáhněte si prosím nejnovější verzi instalátoru z našeho webu (https://betterdiscord.app) a přeinstalujte jej.",
+        "updateSuccessful": "Aktualizace byla úspěšná!",
+        "updateAvailable": "BetterDiscord má novou aktualizaci (v{{version}})",
+        "addonUpdatesAvailable": "BetterDiscord nalezl aktualizace {{count}} vašich doplňků typu {{type}}!",
+        "addonUpdated": "Doplněk {{name}} byl aktualizován na verzi {{version}}!",
+        "checking": "Kontrola aktualizací!",
+        "finishedChecking": "Kontrola aktualizací dokončena!",
+        "checkForUpdates": "Zkontrolovat aktualizace!",
+        "updateAll": "Aktualizovat vše!",
+        "noUpdatesAvailable": "Nejsou dostupné žádné aktualizace.",
+        "versionAvailable": "Je dostupná verze {{version}}!",
+        "upToDateBlankslate": "Všechny vaše doplňky typu {{type}} jsou aktuální!",
+        "updateButton": "Aktualizovat!"
     }
 }

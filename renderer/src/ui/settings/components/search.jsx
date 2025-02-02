@@ -1,22 +1,37 @@
-import {React} from "modules";
-import SearchIcon from "../../icons/search";
+import React from "@modules/react";
+import Button from "@ui/base/button";
+import Close from "@ui/icons/close";
+import SearchIcon from "@ui/icons/search";
 
-export default class Search extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {value: this.props.value};
-        this.onChange = this.onChange.bind(this);
-    }
+const {useState, useEffect, useCallback, useRef} = React;
 
-    onChange(e) {
-        this.setState({value: e.target.value});
-        if (this.props.onChange) this.props.onChange(e);
-    }
 
-    render() {
-        return <div className={"bd-search-wrapper" + (this.props.className ? ` ${this.props.className}` : "")}>
-                    <input onChange={this.onChange} onKeyDown={this.props.onKeyDown} type="text" className="bd-search" placeholder={this.props.placeholder} maxLength="50" value={this.state.value} />
-                    <SearchIcon />
-                </div>;
-    }
+export default function Search({onChange, className, onKeyDown, placeholder}) {
+    const input = useRef(null);
+    const [value, setValue] = useState("");
+
+    // focus search bar on page select
+    useEffect(()=>{
+        if (!input.current) return;
+        input.current.focus();
+    }, []);
+
+    const change = useCallback((e) => {
+        onChange?.(e);
+        setValue(e.target.value);
+    }, [onChange]);
+
+    const reset = useCallback(() => {
+        onChange?.({target: {value: ""}});
+        setValue("");
+        if (!input.current) return;
+        input.current.focus();
+    }, [onChange, input]);
+
+    return <div className={"bd-search-wrapper" + (className ? ` ${className}` : "")}>
+                <input onChange={change} onKeyDown={onKeyDown} type="text" className="bd-search" placeholder={placeholder} maxLength="50" value={value} ref={input}/>
+                {!value && <SearchIcon />}
+                {value && <Button look={Button.Looks.BLANK} color={Button.Colors.TRANSPARENT} size={Button.Sizes.NONE} onClick={reset}><Close size="16px" /></Button>}
+            </div>;
+
 }

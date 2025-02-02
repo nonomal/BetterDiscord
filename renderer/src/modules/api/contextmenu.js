@@ -1,50 +1,81 @@
-import WebpackModules from "../webpackmodules";
-import Patcher from "../patcher";
-import Logger from "common/logger";
-import {React} from "../modules";
+import WebpackModules, {Filters} from "@modules/webpackmodules";
+import Patcher from "@modules/patcher";
+import Logger from "@common/logger";
+import React from "@modules/react";
+
 
 let startupComplete = false;
 
-const MenuComponents = (() => {
-    const out = {};
-    const componentMap = {
-        separator: "Separator",
-        checkbox: "CheckboxItem",
-        radio: "RadioItem",
-        control: "ControlItem",
-        groupstart: "Group",
-        customitem: "Item"
-    };
+const ModulesBundle = WebpackModules.getByProps("MenuItem", "Menu");
+const MenuComponents = {
+    Separator: ModulesBundle?.MenuSeparator,
+    CheckboxItem: ModulesBundle?.MenuCheckboxItem,
+    RadioItem: ModulesBundle?.MenuRadioItem,
+    ControlItem: ModulesBundle?.MenuControlItem,
+    Group: ModulesBundle?.MenuGroup,
+    Item: ModulesBundle?.MenuItem,
+    Menu: ModulesBundle?.Menu,
+};
 
-    try {
-        let contextMenuId = Object.keys(WebpackModules.require.m).find(e => WebpackModules.require.m[e]?.toString().includes("menuitemcheckbox"));
-        const ContextMenuModule = WebpackModules.getModule((m, t, id) => id === contextMenuId);
-        const rawMatches = WebpackModules.require.m[contextMenuId].toString().matchAll(/if\(\w+\.type===\w+\.(\w+)\).+?type:"(.+?)"/g);
+startupComplete = Object.values(MenuComponents).every(v => v);
 
-        out.Menu = Object.values(ContextMenuModule).find(v => v.toString().includes(".isUsingKeyboardNavigation"));
+if (!startupComplete) {
+    const REGEX = /(function .{1,3}\(.{1,3}\){return null}){5}/;
+    const EXTRACT_REGEX = /\.type===.{1,3}\.(.{1,3})\)return .{1,3}\.push\((?:null!=.{1,3}\.props\..+?)?{type:"(.+?)",/g;
+    const EXTRACT_GROUP_REGEX = /\.type===.{1,3}\.(.{1,3})\){.+{type:"groupstart"/;
 
-        for (const [, identifier, type] of rawMatches) {
-            out[componentMap[type]] = ContextMenuModule[identifier];
+    let menuItemsId;
+    let menuParser = "";
+
+    for (const key in WebpackModules.modules) {
+        if (Object.prototype.hasOwnProperty.call(WebpackModules.modules, key)) {
+            if (REGEX.test(WebpackModules.modules[key].toString())) {
+                menuItemsId = key;
+                break;
+            }
         }
-
-        startupComplete = Object.values(componentMap).every(k => out[k]) && !!out.Menu;
-    } catch (error) {
-        startupComplete = false;
-        Logger.stacktrace("ContextMenu~Components", "Fatal startup error:", error);
-
-        Object.assign(out, Object.fromEntries(
-            Object.values(componentMap).map(k => [k, () => null])
-        ));
     }
 
-    return out;
-})();
+    for (const key in WebpackModules.modules) {
+        if (Object.prototype.hasOwnProperty.call(WebpackModules.modules, key)) {
+            const string = WebpackModules.modules[key].toString();
+
+            if (string.includes(menuItemsId) && string.includes("separator")) {
+                menuParser = string;
+                break;
+            }
+        }
+    }
+
+    const contextMenuComponents = WebpackModules.require(menuItemsId);
+
+    for (const [, key, type] of menuParser.matchAll(EXTRACT_REGEX)) {
+        switch (type) {
+            case "separator": MenuComponents.Separator ??= contextMenuComponents[key]; break;
+            case "radio": MenuComponents.RadioItem ??= contextMenuComponents[key]; break;
+            case "checkbox": MenuComponents.CheckboxItem ??= contextMenuComponents[key]; break;
+            case "item": 
+            case "customitem": MenuComponents.Item ??= contextMenuComponents[key]; break;
+            case "compositecontrol":
+            case "control": MenuComponents.ControlItem ??= contextMenuComponents[key]; break;
+        }
+    }
+
+    const match = menuParser.match(EXTRACT_GROUP_REGEX);
+    if (match) {
+        MenuComponents.Group ??= contextMenuComponents[match[1]];
+    }
+
+    MenuComponents.Menu ??= WebpackModules.getModule(Filters.byStrings("getContainerProps()", ".keyboardModeEnabled&&null!="), {searchExports: true});
+}
+
+startupComplete = Object.values(MenuComponents).every(v => v);
 
 const ContextMenuActions = (() => {
     const out = {};
 
     try {
-        const ActionsModule = WebpackModules.getModule(m => Object.values(m).some(v => typeof v === "function" && v.toString().includes("CONTEXT_MENU_CLOSE")), {searchExports: false});
+        const ActionsModule = WebpackModules.getModule((mod, target, id) => WebpackModules.require.m[id]?.toString().includes(`type:"CONTEXT_MENU_OPEN"`), {searchExports: false});
 
         for (const key of Object.keys(ActionsModule)) {
             if (ActionsModule[key].toString().includes("CONTEXT_MENU_CLOSE")) {
@@ -55,8 +86,9 @@ const ContextMenuActions = (() => {
             }
         }
 
-        startupComplete = typeof(out.closeContextMenu) === "function" && typeof(out.openContextMenu) === "function";
-    } catch (error) {
+        startupComplete &&= typeof(out.closeContextMenu) === "function" && typeof(out.openContextMenu) === "function";
+    }
+    catch (error) {
         startupComplete = false;
         Logger.stacktrace("ContextMenu~Components", "Fatal startup error:", error);
         
@@ -78,7 +110,7 @@ class MenuPatcher {
         if (!startupComplete) return Logger.warn("ContextMenu~Patcher", "Startup wasn't successfully, aborting initialization.");
 
         const {module, key} = (() => {
-            const foundModule = WebpackModules.getModule(m => Object.values(m).some(v => typeof v === "function" && v.toString().includes("CONTEXT_MENU_CLOSE")), {searchExports: false});
+            const foundModule = WebpackModules.getModule(m => Object.values(m).some(v => typeof v === "function" && v.toString().includes(`type:"CONTEXT_MENU_CLOSE"`)), {searchExports: false});
             const foundKey = Object.keys(foundModule).find(k => foundModule[k].length === 3);
 
             return {module: foundModule, key: foundKey};
@@ -175,9 +207,9 @@ class ContextMenu {
     /**
      * Allows you to patch a given context menu. Acts as a wrapper around the `Patcher`.
      * 
-     * @param {string} navId Discord's internal navId used to identify context menus
-     * @param {function} callback callback function that accepts the react render tree
-     * @returns {function} a function that automatically unpatches
+     * @param {string} navId Discord's internal `navId` used to identify context menus
+     * @param {function} callback Callback function that accepts the React render tree
+     * @returns {function} A function that automatically unpatches
      */
     patch(navId, callback) {
         MenuPatcher.patch(navId, callback);
@@ -188,8 +220,8 @@ class ContextMenu {
     /**
      * Allows you to remove the patch added to a given context menu.
      * 
-     * @param {string} navId the original navId from patching
-     * @param {function} callback the original callback from patching
+     * @param {string} navId The original `navId` from patching
+     * @param {function} callback The original callback from patching
      */
     unpatch(navId, callback) {
         MenuPatcher.unpatch(navId, callback);
@@ -200,9 +232,9 @@ class ContextMenu {
      * match the actual component being built. View those to see what options exist
      * for each, they often have less in common than you might think.
      * 
-     * @param {object} props - props used to build the item
-     * @param {string} [props.type="text"] - type of the item, options: text, submenu, toggle, radio, custom, separator
-     * @returns {object} the created component
+     * @param {object} props Props used to build the item
+     * @param {string} [props.type="text"] Type of the item, options: text, submenu, toggle, radio, custom, separator
+     * @returns {object} The created component
      * 
      * @example
      * // Creates a single menu item that prints "MENU ITEM" on click
@@ -237,12 +269,13 @@ class ContextMenu {
             Component = MenuComponents.ControlItem;
         }
         if (!props.id) props.id = `${props.label.replace(/^[^a-z]+|[^\w-]+/gi, "-")}`;
-        if (props.danger) props.color = "colorDanger";
+        if (props.danger) props.color = "danger";
         if (props.onClick && !props.action) props.action = props.onClick;
         props.extended = true;
 
         // This is done to make sure the UI actually displays the on/off correctly
         if (type === "toggle") {
+            // eslint-disable-next-line react-hooks/rules-of-hooks
             const [active, doToggle] = React.useState(props.checked || false);
             const originalAction = props.action;
             props.checked = active;
@@ -259,8 +292,9 @@ class ContextMenu {
      * Creates the all the items **and groups** of a context menu recursively.
      * There is no hard limit to the number of groups within groups or number
      * of items in a menu.
-     * @param {Array<object>} setup - array of item props used to build items. See {@link ContextMenu.buildItem}
-     * @returns {Array<object>} array of the created component
+     * 
+     * @param {Array<object>} setup Array of item props used to build items. See {@link ContextMenu.buildItem}.
+     * @returns {Array<object>} Array of the created component
      * 
      * @example
      * // Creates a single item group item with a toggle item
@@ -314,8 +348,9 @@ class ContextMenu {
      * Creates the menu *component* including the wrapping `ContextMenu`.
      * Calls {@link ContextMenu.buildMenuChildren} under the covers.
      * Used to call in combination with {@link ContextMenu.open}.
-     * @param {Array<object>} setup - array of item props used to build items. See {@link ContextMenu.buildMenuChildren}
-     * @returns {function} the unique context menu component
+     * 
+     * @param {Array<object>} setup Array of item props used to build items. See {@link ContextMenu.buildMenuChildren}.
+     * @returns {function} The unique context menu component
      */
     buildMenu(setup) {
         return (props) => {return React.createElement(MenuComponents.Menu, props, this.buildMenuChildren(setup));};
@@ -324,13 +359,12 @@ class ContextMenu {
     /**
      * Function that allows you to open an entire context menu. Recommended to build the menu with this module.
      * 
-     * @param {MouseEvent} event - The context menu event. This can be emulated, requires target, and all X, Y locations.
-     * @param {function} menuComponent - Component to render. This can be any react component or output of {@link ContextMenu.buildMenu}
-     * @param {object} config - configuration/props for the context menu
-     * @param {string} [config.position="right"] - default position for the menu, options: "left", "right"
-     * @param {string} [config.align="top"] - default alignment for the menu, options: "bottom", "top"
-     * @param {function} [config.onClose] - function to run when the menu is closed
-     * @param {boolean} [config.noBlurEvent=false] - No clue
+     * @param {MouseEvent} event The context menu event. This can be emulated, requires target, and all X, Y locations.
+     * @param {function} menuComponent Component to render. This can be any React component or output of {@link ContextMenu.buildMenu}.
+     * @param {object} config Configuration/props for the context menu
+     * @param {string} [config.position="right"] Default position for the menu, options: "left", "right"
+     * @param {string} [config.align="top"] Default alignment for the menu, options: "bottom", "top"
+     * @param {function} [config.onClose] Function to run when the menu is closed
      */
     open(event, menuComponent, config) {
         return ContextMenuActions.openContextMenu(event, function(e) {
@@ -350,7 +384,8 @@ Object.freeze(ContextMenu.prototype);
 
 try {
     MenuPatcher.initialize();
-} catch (error) {
+}
+catch (error) {
     Logger.error("ContextMenu~Patcher", "Fatal error:", error);
 }
 

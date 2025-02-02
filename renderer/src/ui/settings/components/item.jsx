@@ -1,15 +1,15 @@
-import {React} from "modules";
+import React from "@modules/react";
+import Divider from "@ui/divider";
 
-export default class SettingItem extends React.Component {
-    render() {
-        return <div className={"bd-setting-item" + (this.props.inline ? " inline" : "")}>
-                    <div className={"bd-setting-header"}>
-                        <label htmlFor={this.props.id} className={"bd-setting-title"}>{this.props.name}</label>
-                        {this.props.inline && this.props.children}
-                    </div>
-                    <div className={"bd-setting-note"}>{this.props.note}</div>
-                    {!this.props.inline && this.props.children}
-                    <div className={"bd-setting-divider"} />
-                </div>;
-    }
+
+export default function SettingItem({id, name, note, inline, children}) {
+    return <div className={"bd-setting-item" + (inline ? " inline" : "")}>
+                <div className={"bd-setting-header"}>
+                    <label htmlFor={id} className={"bd-setting-title"}>{name}</label>
+                    {inline && children}
+                </div>
+                <div className={"bd-setting-note"}>{note}</div>
+                {!inline && children}
+                <Divider className="bd-setting-divider" />
+            </div>;
 }

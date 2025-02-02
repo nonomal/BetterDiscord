@@ -1,26 +1,24 @@
-import {React} from "modules";
+import React from "@modules/react";
 
-import RadioIcon from "../../icons/radio";
+import RadioIcon from "@ui/icons/radio";
 
-export default class Radio extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {value: this.props.options.findIndex(o => o.value === this.props.value)};
-        this.onChange = this.onChange.bind(this);
-        this.renderOption = this.renderOption.bind(this);
-    }
+const {useState, useCallback} = React;
 
-    onChange(e) {
-        const index = parseInt(e.target.value);
-        const newValue = this.props.options[index].value;
-        this.setState({value: index});
-        if (this.props.onChange) this.props.onChange(newValue);
-    }
 
-    renderOption(opt, index) {
-        const isSelected = this.state.value === index;
-        return <label className={"bd-radio-option" + (isSelected ? " bd-radio-selected" : "")}>
-                <input onChange={this.onChange} type="radio" name={this.props.name} checked={isSelected} value={index} />
+export default function Radio({name, value, options, onChange, disabled}) {
+    const [index, setIndex] = useState(options.findIndex(o => o.value === value));
+    const change = useCallback((e) => {
+        if (disabled) return;
+        const newIndex = parseInt(e.target.value);
+        const newValue = options[newIndex].value;
+        onChange?.(newValue);
+        setIndex(newIndex);
+    }, [options, onChange, disabled]);
+
+    function renderOption(opt, i) {
+        const isSelected = index === i;
+        return <label className={"bd-radio-option" + (isSelected ? " bd-radio-selected" : "")} style={{borderColor: opt.color ?? "transparent"}}>
+                <input onChange={change} type="radio" name={name} checked={isSelected} value={i} disabled={disabled} />
                 {/* <span className="bd-radio-button"></span> */}
                 <RadioIcon className="bd-radio-icon" size="24" checked={isSelected} />
                 <div className="bd-radio-label-wrap">
@@ -30,15 +28,5 @@ export default class Radio extends React.Component {
             </label>;
     }
 
-    render() {
-        return <div className="bd-radio-group">
-            {this.props.options.map(this.renderOption)}
-        </div>;
-    }
+    return <div className={`bd-radio-group ${disabled ? "bd-radio-disabled" : ""}`}>{options.map(renderOption)}</div>;
 }
-
-/* <label class="container">
-  <input type="radio" name="test" checked="checked">
-  <span class="checkmark"></span>
-  <div class="test">One<div class="desc">Description</div></div>
-</label> */

@@ -6,6 +6,7 @@
 @import "./buttons.css";
 @import "./spinner.css";
 @import "./search.css";
+@import "./text.css";
 
 .bd-chat-badge {
     vertical-align: bottom;
@@ -19,23 +20,6 @@
     margin-left: 4px;
 }
 
-.bd-changelog-modal video,
-.bd-changelog-modal img {
-    width: 100%;
-    border-radius: 5px;
-    outline: none;
-}
-
-.bd-changelog-modal code.inline {
-    padding: 0.2em;
-    margin: -0.2em 0;
-    border-radius: 3px;
-    font-size: 85%;
-    line-height: 1.125rem;
-    white-space: pre-wrap;
-    background: var(--background-secondary);
-}
-
 .bd-link {
     text-decoration: none;
 }
@@ -47,6 +31,7 @@
 .bd-divider {
     width: 100%;
     height: 1px;
+    margin: 0;
+    border: none;
     border-top: thin solid var(--background-modifier-accent);
-    margin-bottom: 1em;
 }
